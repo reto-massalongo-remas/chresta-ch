@@ -1,0 +1,53 @@
+.row {
+  display: grid;
+  grid-template-columns: 220px 120px 110px 90px 110px auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--border-lt);
+  border-radius: var(--radius);
+  transition: background 0.12s;
+}
+.row:first-child { border-top: 1px solid var(--border-lt); }
+.row:hover { background: var(--teal-pale); }
+
+.name  { font-size: 15px; font-weight: 500; color: var(--text); }
+.date  { font-size: 13px; color: var(--muted); }
+.time  { font-size: 13px; color: var(--muted); }
+.price { font-size: 14px; font-weight: 600; color: var(--text); }
+.seats { font-size: 12px; font-family: var(--font-ui); font-weight: 500; }
+.ok    { color: var(--success); }
+.low   { color: #e65100; }
+.full  { color: var(--error); }
+
+.bookBtn {
+  justify-self: end;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--teal);
+  background: transparent;
+  border: 1px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s;
+  text-decoration: none;
+  display: inline-block;
+}
+.bookBtn:hover { background: var(--teal); color: #fff; }
+.bookFull {
+  color: var(--hint);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+.bookFull:hover { background: transparent; color: var(--hint); }
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+  }
+  .date, .time, .seats { display: none; }
+}

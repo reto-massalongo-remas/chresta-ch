@@ -1,0 +1,38 @@
+.card {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  aspect-ratio: 307 / 380;
+  cursor: pointer;
+  text-decoration: none;
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 24px;
+}
+.title {
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+.link {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: rgba(255,255,255,0.72);
+  transition: color 0.15s;
+}
+.card:hover .link { color: var(--teal-light); }

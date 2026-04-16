@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════
+   Chresta.ch · Design Tokens
+   Source: Figma UI Kit node-id=140-2
+═══════════════════════════════════════════════════ */
+:root {
+  /* Brand */
+  --teal:        #087283;
+  --teal-dark:   #026D7E;
+  --teal-pale:   #EFF6F6;
+  --teal-light:  #DDF4F8;
+  --navy:        #242958;
+  --dark:        #3A3A3A;
+
+  /* Text */
+  --text:        #1A202C;
+  --muted:       #585858;
+  --hint:        #A7A7A7;
+
+  /* Backgrounds */
+  --bg:          #F6F6F6;
+  --white:       #FFFFFF;
+
+  /* Borders */
+  --border:      #DADADA;
+  --border-lt:   #EEEEEE;
+
+  /* Semantic */
+  --success:     #2E7D32;
+  --error:       #C62828;
+  --info:        #1565C0;
+
+  /* Typography */
+  --font:        'Outfit', sans-serif;
+  --font-ui:     'Inter', sans-serif;
+  --font-script: 'Great Vibes', cursive;
+
+  /* Layout */
+  --nav-h:       90px;
+  --max:         1280px;
+  --radius:      6px;
+  --radius-lg:   10px;
+  --shadow:      0 2px 16px rgba(0,0,0,0.07);
+  --shadow-md:   0 4px 32px rgba(0,0,0,0.11);
+  --shadow-lg:   0 8px 48px rgba(0,0,0,0.15);
+}

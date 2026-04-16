@@ -1,0 +1,287 @@
+/* ── HERO ─────────────────────────────── */
+.hero {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  margin-top: calc(-1 * var(--nav-h));
+}
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(26,32,44,0.84) 0%, rgba(26,32,44,0.58) 50%, rgba(26,32,44,0.18) 100%);
+}
+.heroContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.heroEyebrow {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  margin-bottom: 16px;
+}
+.heroH1 {
+  font-size: 56px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.08;
+  letter-spacing: -0.6px;
+  margin-bottom: 16px;
+  max-width: 580px;
+}
+.heroSub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.65;
+  margin-bottom: 32px;
+  max-width: 460px;
+}
+.heroBtns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ── TRUST BAR ─────────────────────────── */
+.trustBar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-lt);
+  padding: 14px 0;
+}
+.trustInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.trustLabel {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--hint);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.trustChip {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.trustDivider { width: 1px; height: 20px; background: var(--border-lt); flex-shrink: 0; }
+.trustPhone { font-size: 13px; color: var(--teal); font-weight: 500; white-space: nowrap; text-decoration: none; }
+
+/* ── USP STRIP ─────────────────────────── */
+.uspStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border-lt);
+  border-left: 1px solid var(--border-lt);
+}
+.uspItem {
+  padding: 24px 28px;
+  border-right: 1px solid var(--border-lt);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.uspIcon { font-size: 28px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.uspTitle { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.uspDesc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+/* ── BOOKING TEASER ────────────────────── */
+.bookingTeaser {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  background: var(--white);
+}
+.bookingText { padding: 48px; }
+.bookingSub { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+.bookingList {
+  margin: 20px 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bookingList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.check { color: var(--teal); font-weight: 700; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.bookingSub2 { color: var(--hint); font-size: 12px; }
+.bookingBtns { display: flex; gap: 12px; flex-wrap: wrap; }
+.bookingImg {
+  background-size: cover;
+  background-position: center;
+  min-height: 360px;
+}
+
+/* ── CATEGORY CARDS ────────────────────── */
+.catGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* ── SEIT 1989 ─────────────────────────── */
+.seitBanner {
+  background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+  padding: 44px 32px;
+  text-align: center;
+}
+.seitEyebrow {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 8px;
+}
+.seitScript {
+  font-family: var(--font-script);
+  font-size: 60px;
+  color: #fff;
+  line-height: 1;
+}
+
+/* ── COURSES ───────────────────────────── */
+.coursesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* ── TEAM ──────────────────────────────── */
+.teamSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 460px;
+}
+.teamText {
+  background: var(--navy);
+  padding: 64px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.teamTitle {
+  font-size: 34px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 16px;
+}
+.teamDesc {
+  font-size: 15px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 400px;
+}
+.teamBtns { display: flex; gap: 12px; flex-wrap: wrap; }
+.teamImg { background-size: cover; background-position: center; }
+
+/* ── GALLERY ───────────────────────────── */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 200px;
+  gap: 3px;
+}
+.galleryImg {
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+/* ── NEWS ──────────────────────────────── */
+.newsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.newsCard {
+  display: block;
+  border: 1px solid var(--border-lt);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.newsCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.newsImg { height: 180px; background-size: cover; background-position: center; }
+.newsBody { padding: 20px; }
+.newsDate { font-family: var(--font-ui); font-size: 11px; color: var(--hint); letter-spacing: 1px; margin-bottom: 6px; }
+.newsTitle { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.newsExcerpt { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.newsLink { color: var(--teal); font-size: 13px; font-weight: 500; margin-top: 12px; display: block; }
+
+/* ── CTA BANNER ────────────────────────── */
+.ctaBanner {
+  background: var(--teal);
+  padding: 64px 32px;
+  text-align: center;
+}
+.ctaEyebrow {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 10px;
+}
+.ctaTitle { font-size: 38px; font-weight: 500; color: #fff; margin-bottom: 12px; }
+.ctaSub { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 32px; }
+.ctaBtns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+/* ── RESPONSIVE ────────────────────────── */
+@media (max-width: 1100px) {
+  .catGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .hero { height: 480px; }
+  .heroH1 { font-size: 38px; }
+  .uspStrip { grid-template-columns: 1fr 1fr; }
+  .bookingTeaser { grid-template-columns: 1fr; }
+  .bookingImg { height: 260px; }
+  .teamSection { grid-template-columns: 1fr; }
+  .teamImg { height: 300px; order: -1; }
+  .gallery { grid-template-columns: repeat(3, 1fr); height: 160px; }
+  .newsGrid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .hero { height: 420px; }
+  .heroH1 { font-size: 30px; }
+  .uspStrip { grid-template-columns: 1fr; }
+  .catGrid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .gallery { grid-template-columns: repeat(2, 1fr); }
+  .teamText { padding: 40px 24px; }
+  .ctaTitle { font-size: 28px; }
+}
