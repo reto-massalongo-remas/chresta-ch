@@ -2,10 +2,18 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 300;
+  height: var(--nav-h);
   background: var(--white);
   border-bottom: 1px solid var(--border-lt);
-  height: var(--nav-h);
   box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Transparent hero overlay state */
+.transparent {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .inner {
@@ -18,7 +26,7 @@
   gap: 40px;
 }
 
-/* Logo */
+/* ── LOGO ── */
 .logo {
   display: flex;
   flex-direction: column;
@@ -31,16 +39,20 @@
   font-size: 34px;
   color: var(--text);
   line-height: 0.95;
+  transition: color 0.3s;
 }
+.transparent .logoScript { color: #fff; }
 .logoSub {
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--hint);
   margin-top: 2px;
+  transition: color 0.3s;
 }
+.transparent .logoSub { color: rgba(255,255,255,0.5); }
 
-/* Desktop Nav */
+/* ── DESKTOP NAV ── */
 .nav {
   display: flex;
   height: 100%;
@@ -67,6 +79,10 @@
   color: var(--text);
   border-bottom-color: var(--teal);
 }
+.transparent .navLink { color: rgba(255,255,255,0.78); }
+.transparent .navLink:hover,
+.transparent .navLinkActive { color: #fff; border-bottom-color: rgba(255,255,255,0.6); }
+
 .chev {
   font-size: 8px;
   opacity: 0.5;
@@ -76,7 +92,7 @@
   transform: rotate(180deg);
 }
 
-/* Mega Menu */
+/* ── MEGA MENU ── */
 .megaMenu {
   position: absolute;
   top: calc(var(--nav-h) - 2px);
@@ -96,7 +112,6 @@
   width: 780px;
   grid-template-columns: repeat(4, 1fr);
 }
-.megaCol {}
 .megaColTitle {
   font-family: var(--font-ui);
   font-size: 10px;
@@ -114,10 +129,10 @@
   font-weight: 400;
   color: var(--muted);
   padding: 6px 0;
-  transition: color 0.12s;
+  transition: color 0.12s, padding-left 0.12s;
   text-decoration: none;
 }
-.megaLink:hover { color: var(--teal); }
+.megaLink:hover { color: var(--teal); padding-left: 4px; }
 .megaFooter {
   grid-column: 1 / -1;
   margin-top: 16px;
@@ -127,7 +142,7 @@
   justify-content: flex-end;
 }
 
-/* Actions */
+/* ── ACTIONS ── */
 .actions {
   margin-left: auto;
   display: flex;
@@ -139,16 +154,24 @@
   position: relative;
   width: 40px; height: 40px;
   display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   color: var(--muted);
   font-size: 17px;
   cursor: pointer;
   background: transparent;
-  transition: background 0.12s;
+  transition: background 0.12s, border-color 0.3s, color 0.3s;
   text-decoration: none;
 }
 .cartBtn:hover { background: var(--bg); }
+.transparent .cartBtn {
+  border-color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.85);
+}
+.transparent .cartBtn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.7);
+}
 .cartBadge {
   position: absolute; top: -5px; right: -5px;
   background: var(--teal);
@@ -160,16 +183,19 @@
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Mobile toggle */
+/* ── MOBILE TOGGLE ── */
 .mobileToggle {
   display: none;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   margin-left: auto;
+  width: 36px;
+  height: 36px;
 }
 .mobileToggle span {
   width: 22px; height: 2px;
@@ -177,61 +203,106 @@
   border-radius: 2px;
   display: block;
   transition: all 0.25s;
+  transform-origin: center;
 }
+.transparent .mobileToggle span { background: #fff; }
 
-/* Mobile panel */
+/* Hamburger → X animation */
+.barTop  { transform: translateY(7px) rotate(45deg) !important; }
+.barMid  { opacity: 0 !important; transform: scaleX(0) !important; }
+.barBot  { transform: translateY(-7px) rotate(-45deg) !important; }
+
+/* ── MOBILE PANEL ── */
 .mobileBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0,0,0,0.5);
   z-index: 490;
+  backdrop-filter: blur(2px);
 }
 .mobilePanel {
   position: fixed;
   top: 0; right: 0;
-  width: 300px; height: 100%;
+  width: min(320px, 90vw); height: 100%;
   background: var(--white);
-  padding: 28px 24px;
+  padding: 0;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
   z-index: 500;
   display: flex;
   flex-direction: column;
-  gap: 0;
+}
+.mobilePanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 64px;
+  border-bottom: 1px solid var(--border-lt);
+  flex-shrink: 0;
 }
 .mobileLogo {
   font-family: var(--font-script);
-  font-size: 32px;
+  font-size: 30px;
   color: var(--text);
-  margin-bottom: 20px;
+}
+.mobileClose {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: var(--bg);
+  border-radius: var(--radius);
+  font-size: 18px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.mobileLinks {
+  flex: 1;
+  padding: 8px 0;
 }
 .mobileLink {
-  display: block;
-  padding: 13px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
   font-size: 16px;
   font-weight: 500;
   color: var(--text);
   border-bottom: 1px solid var(--border-lt);
   text-decoration: none;
-  transition: color 0.12s;
+  transition: color 0.12s, background 0.12s;
 }
-.mobileLink:hover { color: var(--teal); }
-.mobileContact {
-  margin-top: 24px;
-  padding-top: 20px;
+.mobileLink::after { content: '›'; color: var(--hint); font-size: 18px; }
+.mobileLink:hover { color: var(--teal); background: var(--teal-pale); }
+.mobilePanelFoot {
+  padding: 20px;
   border-top: 1px solid var(--border-lt);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.mobileContact a { font-size: 14px; color: var(--muted); text-decoration: none; }
+.mobileContact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mobileContact a {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mobileContact a:hover { color: var(--teal); }
 
-/* Responsive */
+/* ── RESPONSIVE ── */
 @media (max-width: 1000px) {
   .nav { display: none; }
   .mobileToggle { display: flex; }
   .actions .btn { display: none; }
+  .actions { gap: 10px; }
 }
 @media (max-width: 600px) {
-  .inner { padding: 0 16px; gap: 16px; }
+  .inner { padding: 0 16px; gap: 12px; }
+  .header { height: var(--nav-h-mobile); }
 }

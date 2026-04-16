@@ -6,33 +6,33 @@ import CategoryCard from '../components/ui/CategoryCard'
 import CourseRow, { Course } from '../components/ui/CourseRow'
 import styles from './Home.module.css'
 
-const HERO_IMG = 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1800&auto=format&fit=crop&q=85'
+const HERO_IMG = 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&auto=format&fit=crop&q=85'
 
 const CATEGORY_CARDS = [
-  { title: 'Fahrschule', href: '/fahrschule', bgUrl: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=700&auto=format&fit=crop&q=80' },
-  { title: 'Chauffeur',  href: '/chauffeur',  bgUrl: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=700&auto=format&fit=crop&q=80' },
-  { title: 'Fahrlehrer', href: '/fahrlehrer', bgUrl: 'https://images.unsplash.com/photo-1562516155-e0c1ee44059b?w=700&auto=format&fit=crop&q=80' },
-  { title: 'Mieten / Reisen', href: '/mieten', bgUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=80' },
+  { title: 'Fahrschule',    href: '/fahrschule', bgUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=700&auto=format&fit=crop&q=80' },
+  { title: 'Chauffeur',     href: '/chauffeur',  bgUrl: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=700&auto=format&fit=crop&q=80' },
+  { title: 'Fahrlehrer',    href: '/fahrlehrer', bgUrl: 'https://images.unsplash.com/photo-1562516155-e0c1ee44059b?w=700&auto=format&fit=crop&q=80' },
+  { title: 'Mieten / Reisen', href: '/mieten',  bgUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=80' },
 ]
 
 const COURSES_FAHRSCHULE: Course[] = [
-  { name: 'Nothelfer-Kurs Teil 1', date: 'Sa 06.12.2025', time: '16:30 – 19:30', price: 'CHF 25.00',  seats: 5 },
-  { name: 'Nothelfer-Kurs Teil 1', date: 'Fr 12.12.2025', time: '09:00 – 12:00', price: 'CHF 25.00',  seats: 5 },
-  { name: 'Nothelfer-Kurs Teil 2', date: 'Sa 13.12.2025', time: '09:00 – 17:00', price: 'CHF 115.00', seats: 6 },
-  { name: 'BLS-AED-SRC Komplettkurs', date: 'Di 16.12.2025', time: '08:00 – 12:30', price: 'CHF 165.00', seats: 6 },
-  { name: 'Erste-Hilfe Refresher', date: 'Do 18.12.2025', time: '08:00 – 12:00', price: 'CHF 155.00', seats: null },
-  { name: 'PGS 1 Motorrad Grundkurs', date: 'Sa 25.01.2026', time: '08:00 – 17:00', price: 'CHF 290.00', seats: 2 },
+  { name: 'Nothelfer-Kurs Teil 1',    date: 'Sa 06.12.2025', time: '16:30 – 19:30', price: 'CHF 25.00',   seats: 5 },
+  { name: 'Nothelfer-Kurs Teil 1',    date: 'Fr 12.12.2025', time: '09:00 – 12:00', price: 'CHF 25.00',   seats: 5 },
+  { name: 'Nothelfer-Kurs Teil 2',    date: 'Sa 13.12.2025', time: '09:00 – 17:00', price: 'CHF 115.00',  seats: 6 },
+  { name: 'BLS-AED-SRC Komplettkurs', date: 'Di 16.12.2025', time: '08:00 – 12:30', price: 'CHF 165.00',  seats: 6 },
+  { name: 'Erste-Hilfe Refresher',    date: 'Do 18.12.2025', time: '08:00 – 12:00', price: 'CHF 155.00',  seats: null },
+  { name: 'PGS 1 Motorrad Grundkurs', date: 'Sa 25.01.2026', time: '08:00 – 17:00', price: 'CHF 290.00',  seats: 2 },
 ]
 
 const COURSES_CZV: Course[] = [
-  { name: 'CZV Module 1 – Gefahrenlehre',    date: 'Mo 09.12.2025',     time: '08:00 – 17:00', price: 'CHF 380.00',   seats: 8 },
-  { name: 'CZV Module 2 – Ladungssicherung', date: 'Di 10.12.2025',     time: '08:00 – 17:00', price: 'CHF 380.00',   seats: 3 },
-  { name: 'CZV Vollkurs (5 Tage)',            date: 'Mo–Fr 16.–20.02.26',time: '08:00 – 17:00', price: 'CHF 1\'890.00', seats: 5 },
+  { name: 'CZV Module 1 – Gefahrenlehre',    date: 'Mo 09.12.2025',      time: '08:00 – 17:00', price: 'CHF 380.00',    seats: 8 },
+  { name: 'CZV Module 2 – Ladungssicherung', date: 'Di 10.12.2025',      time: '08:00 – 17:00', price: 'CHF 380.00',    seats: 3 },
+  { name: 'CZV Vollkurs (5 Tage)',            date: 'Mo–Fr 16.–20.02.26', time: '08:00 – 17:00', price: 'CHF 1\'890.00', seats: 5 },
 ]
 
 const COURSES_MOTO: Course[] = [
-  { name: 'Schnupperkurs Motorrad',       date: 'Sa 18.01.2026', time: '09:00 – 12:00', price: 'CHF 80.00',  seats: 6 },
-  { name: 'PGS 1 Motorrad Grundkurs',     date: 'Sa 25.01.2026', time: '08:00 – 17:00', price: 'CHF 290.00', seats: 2 },
+  { name: 'Schnupperkurs Motorrad',         date: 'Sa 18.01.2026', time: '09:00 – 12:00', price: 'CHF 80.00',  seats: 6 },
+  { name: 'PGS 1 Motorrad Grundkurs',       date: 'Sa 25.01.2026', time: '08:00 – 17:00', price: 'CHF 290.00', seats: 2 },
   { name: 'Kurventraining Fortgeschrittene', date: 'So 22.03.2026', time: '08:00 – 17:00', price: 'CHF 340.00', seats: null },
 ]
 
@@ -43,17 +43,24 @@ const TABS = [
 ]
 
 const NEWS = [
-  { date: '12. April 2026', title: 'Neue Motorrad-Kursdaten für Sommer 2026', excerpt: 'Ab sofort sind alle Motorrad-Grundkurse und Schnupperkurse für die Sommersaison buchbar.', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=600&auto=format&fit=crop&q=80' },
+  { date: '12. April 2026', title: 'Neue Motorrad-Kursdaten für Sommer 2026', excerpt: 'Ab sofort sind alle Motorrad-Grundkurse und Schnupperkurse für die Sommersaison buchbar.', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80' },
   { date: '08. April 2026', title: 'Zwei neue Fahrlehrer verstärken unser Team', excerpt: 'Mit Marco und Laura haben wir zwei hochqualifizierte Fahrlehrer in unser Team aufgenommen.', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&auto=format&fit=crop&q=80' },
   { date: '01. April 2026', title: 'Online-Buchung jetzt für alle Kurse verfügbar', excerpt: 'Alle Kurse – von Nothilfe bis CZV – können ab sofort direkt online gebucht und bezahlt werden.', img: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&auto=format&fit=crop&q=80' },
 ]
 
 const GALLERY = [
-  'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=600&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=600&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=600&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=700&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=700&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=700&auto=format&fit=crop&q=80',
+]
+
+const USP = [
+  { icon: '📅', title: 'Online buchen', desc: 'Kurse & Fahrstunden rund um die Uhr reservieren' },
+  { icon: '🏆', title: 'Seit 1989',     desc: 'Jahrzehntelange Erfahrung im Knonaueramt' },
+  { icon: '🎓', title: 'Alle Kategorien', desc: 'Kat. B, A, CZV, Nothilfe und vieles mehr' },
+  { icon: '📍', title: 'Zentral gelegen', desc: 'Industriestrasse 17, Affoltern am Albis' },
 ]
 
 export default function Home() {
@@ -64,20 +71,24 @@ export default function Home() {
     <>
       {/* ── HERO ── */}
       <section className={styles.hero}>
-        <motion.div
+        <motion.img
+          src={HERO_IMG}
           className={styles.heroBg}
-          style={{ backgroundImage: `url(${HERO_IMG})` }}
-          initial={{ scale: 1.06 }}
+          alt=""
+          loading="eager"
+          fetchPriority="high"
+          initial={{ scale: 1.07 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 7, ease: 'linear' }}
+          transition={{ duration: 8, ease: 'linear' }}
         />
         <div className={styles.heroOverlay} />
+
         <div className={`container ${styles.heroContent}`}>
           <motion.p
             className={styles.heroEyebrow}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
+            transition={{ delay: 0.25, duration: 0.6 }}
           >
             Fahrschule im Knonaueramt · seit 1989
           </motion.p>
@@ -85,7 +96,7 @@ export default function Home() {
             className={styles.heroH1}
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.65 }}
+            transition={{ delay: 0.4, duration: 0.65 }}
           >
             Die Fahrschule<br />im Knonaueramt
           </motion.h1>
@@ -93,52 +104,51 @@ export default function Home() {
             className={styles.heroSub}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: 0.55, duration: 0.6 }}
           >
-            Mit über 12 engagierten Mitarbeiterinnen und Mitarbeitern zählt die Chresta GmbH zu den grössten und renommiertesten Fahrschulen im Knonaueramt.
+            Mit über 12 engagierten Mitarbeiterinnen und Mitarbeitern zählt die Chresta GmbH zu den renommiertesten Fahrschulen im Knonaueramt.
           </motion.p>
           <motion.div
             className={styles.heroBtns}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.65, duration: 0.55 }}
+            transition={{ delay: 0.7, duration: 0.55 }}
           >
             <Link to="/fahrschule" className="btn btn-teal btn-lg">Kurse entdecken →</Link>
             <Link to="/fahrstunden-buchen" className="btn btn-outline btn-lg">Fahrstunden buchen</Link>
           </motion.div>
         </div>
+
+        {/* Scroll cue */}
+        <div className={styles.heroScroll}>
+          <span>Scroll</span>
+          <div className={styles.heroScrollLine} />
+        </div>
       </section>
 
       {/* ── TRUST BAR ── */}
       <div className={styles.trustBar}>
-        <div className="container">
-          <div className={styles.trustInner}>
-            <span className={styles.trustLabel}>Zertifiziert</span>
-            {['asa CZV', 'SFV ASMC', 'EDUQUA'].map(c => (
-              <span key={c} className={styles.trustChip}>{c}</span>
-            ))}
-            <div className={styles.trustDivider} />
-            <span className={styles.trustLabel}>Bereiche</span>
-            {['Kat. B', '🏍', 'Kat. C/D', 'CZV', 'CMC · CTC'].map(c => (
-              <span key={c} className={styles.trustChip}>{c}</span>
-            ))}
-            <div className={styles.trustDivider} style={{ marginLeft: 'auto' }} />
-            <a href="tel:0447615958" className={styles.trustPhone}>📞 044 761 59 58</a>
-          </div>
+        <div className={styles.trustInner}>
+          <span className={styles.trustLabel}>Zertifiziert</span>
+          {['asa CZV', 'SFV ASMC', 'EDUQUA'].map(c => (
+            <span key={c} className={styles.trustChip}>{c}</span>
+          ))}
+          <div className={styles.trustDivider} />
+          <span className={styles.trustLabel}>Bereiche</span>
+          {['Kat. B', '🏍 Motorrad', 'Kat. C/D', 'CZV', 'CMC · CTC'].map(c => (
+            <span key={c} className={styles.trustChip}>{c}</span>
+          ))}
+          <div className={styles.trustDivider} />
+          <a href="tel:0447615958" className={styles.trustPhone}>📞 044 761 59 58</a>
         </div>
       </div>
 
       {/* ── USP STRIP ── */}
       <FadeIn>
         <div className={styles.uspStrip}>
-          {[
-            { icon: '📅', title: 'Online buchen', desc: 'Kurse & Fahrstunden rund um die Uhr reservieren' },
-            { icon: '🏆', title: 'Seit 1989',     desc: 'Jahrzehntelange Erfahrung im Knonaueramt' },
-            { icon: '🎓', title: 'Alle Kategorien', desc: 'Kat. B, A, CZV, Nothilfe und vieles mehr' },
-            { icon: '📍', title: 'Zentral gelegen', desc: 'Industriestrasse 17, 8910 Affoltern am Albis' },
-          ].map(u => (
+          {USP.map(u => (
             <div key={u.title} className={styles.uspItem}>
-              <span className={styles.uspIcon}>{u.icon}</span>
+              <div className={styles.uspIconWrap}>{u.icon}</div>
               <div>
                 <div className={styles.uspTitle}>{u.title}</div>
                 <div className={styles.uspDesc}>{u.desc}</div>
@@ -149,7 +159,7 @@ export default function Home() {
       </FadeIn>
 
       {/* ── BOOKING TEASER ── */}
-      <section className={`section section-bg`}>
+      <section className="section section-bg">
         <div className="container">
           <FadeIn>
             <div className={styles.bookingTeaser}>
@@ -177,7 +187,7 @@ export default function Home() {
               </div>
               <div
                 className={styles.bookingImg}
-                style={{ backgroundImage: `url(https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&auto=format&fit=crop&q=85)` }}
+                style={{ backgroundImage: `url(https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=900&auto=format&fit=crop&q=85)` }}
               />
             </div>
           </FadeIn>
@@ -185,7 +195,7 @@ export default function Home() {
       </section>
 
       {/* ── CATEGORY CARDS ── */}
-      <section className="section section-bg">
+      <section className="section">
         <div className="container">
           <FadeIn>
             <div className="text-center mb-24">
@@ -270,7 +280,8 @@ export default function Home() {
             key={i}
             className={styles.galleryImg}
             style={{ backgroundImage: `url(${url})` }}
-            whileHover={{ filter: 'brightness(1.15)', transition: { duration: 0.2 } }}
+            whileHover={{ scale: 1.04 }}
+            transition={{ duration: 0.3 }}
           />
         ))}
       </div>

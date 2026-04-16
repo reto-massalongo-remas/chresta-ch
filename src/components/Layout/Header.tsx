@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Header.module.css'
@@ -159,20 +159,33 @@ const menuVariants = {
 const mobileVariants = {
   hidden: { x: '100%' },
   visible: { x: 0, transition: { type: 'spring', damping: 28, stiffness: 300 } },
-  exit: { x: '100%', transition: { duration: 0.2 } },
+  exit: { x: '100%', transition: { duration: 0.22, ease: 'easeIn' } },
 }
 
 export default function Header() {
   const { pathname } = useLocation()
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Close mobile menu on route change
+  useEffect(() => { setMobileOpen(false) }, [pathname])
+
+  const isHome = pathname === '/'
+  const transparent = isHome && !scrolled
 
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${transparent ? styles.transparent : ''}`}>
       <div className={styles.inner}>
 
         {/* Logo */}
-        <Link to="/" className={styles.logo} onClick={() => setMobileOpen(false)}>
+        <Link to="/" className={styles.logo}>
           <span className={styles.logoScript}>Chresta</span>
           <span className={styles.logoSub}>Affoltern am Albis</span>
         </Link>
@@ -252,11 +265,11 @@ export default function Header() {
         <button
           className={styles.mobileToggle}
           onClick={() => setMobileOpen(v => !v)}
-          aria-label="Menu"
+          aria-label={mobileOpen ? 'Menü schliessen' : 'Menü öffnen'}
         >
-          <span className={mobileOpen ? styles.barTop : ''}></span>
-          <span className={mobileOpen ? styles.barMid : ''}></span>
-          <span className={mobileOpen ? styles.barBot : ''}></span>
+          <span className={mobileOpen ? styles.barTop : ''} />
+          <span className={mobileOpen ? styles.barMid : ''} />
+          <span className={mobileOpen ? styles.barBot : ''} />
         </button>
       </div>
 
@@ -278,29 +291,31 @@ export default function Header() {
               animate="visible"
               exit="exit"
             >
-              <div className={styles.mobileLogo}>Chresta</div>
-              {NAV.map(item => (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  className={styles.mobileLink}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div style={{ marginTop: 24 }}>
-                <Link
-                  to="/fahrstunden-buchen"
-                  className="btn btn-teal btn-full"
-                  onClick={() => setMobileOpen(false)}
-                >
+              <div className={styles.mobilePanelHead}>
+                <span className={styles.mobileLogo}>Chresta</span>
+                <button className={styles.mobileClose} onClick={() => setMobileOpen(false)}>✕</button>
+              </div>
+
+              <div className={styles.mobileLinks}>
+                {NAV.map(item => (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    className={styles.mobileLink}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+
+              <div className={styles.mobilePanelFoot}>
+                <Link to="/fahrstunden-buchen" className="btn btn-teal btn-full">
                   Fahrstunden buchen →
                 </Link>
-              </div>
-              <div className={styles.mobileContact}>
-                <a href="tel:0447615958">📞 044 761 59 58</a>
-                <a href="mailto:info@chresta.ch">✉ info@chresta.ch</a>
+                <div className={styles.mobileContact}>
+                  <a href="tel:0447615958">📞 044 761 59 58</a>
+                  <a href="mailto:info@chresta.ch">✉ info@chresta.ch</a>
+                </div>
               </div>
             </motion.div>
           </>

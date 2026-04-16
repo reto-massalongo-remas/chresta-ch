@@ -35,8 +35,9 @@
   --font-script: 'Great Vibes', cursive;
 
   /* Layout */
-  --nav-h:       90px;
-  --max:         1280px;
+  --nav-h:         90px;
+  --nav-h-mobile:  64px;
+  --max:           1280px;
   --radius:      6px;
   --radius-lg:   10px;
   --shadow:      0 2px 16px rgba(0,0,0,0.07);

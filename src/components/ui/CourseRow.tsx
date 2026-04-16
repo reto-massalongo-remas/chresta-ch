@@ -19,22 +19,40 @@ export default function CourseRow({ course, index }: Props) {
   const full = course.seats === null || course.seats === 0
   const low  = course.seats !== null && course.seats <= 2
 
+  const seatsClass = full ? styles.full : low ? styles.low : styles.ok
+  const seatsLabel = full ? 'ausgebucht' : `${course.seats} Plätze frei`
+
   return (
     <motion.div
       className={styles.row}
-      initial={{ opacity: 0, x: -16 }}
+      initial={{ opacity: 0, x: -12 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.35, ease: 'easeOut' }}
+      transition={{ delay: index * 0.05, duration: 0.32, ease: 'easeOut' }}
     >
       <span className={styles.name}>{course.name}</span>
-      <span className={styles.date}>{course.date}</span>
-      <span className={styles.time}>{course.time}</span>
-      <span className={styles.price}>{course.price}</span>
-      <span className={`${styles.seats} ${full ? styles.full : low ? styles.low : styles.ok}`}>
-        {full ? 'ausgebucht' : `${course.seats} Plätze frei`}
+
+      <span className={styles.meta}>
+        <span className={styles.metaIcon}>📅</span>
+        {course.date}
       </span>
+
+      <span className={styles.meta}>
+        <span className={styles.metaIcon}>🕐</span>
+        {course.time}
+      </span>
+
+      <span className={styles.price}>{course.price}</span>
+
+      <span className={`${styles.seats} ${seatsClass}`}>
+        <span className={styles.seatsDot} />
+        {seatsLabel}
+      </span>
+
+      {/* Mobile price+seats row (CSS only via class) */}
+      <span className={styles.priceRow} style={{ display: 'none' }} />
+
       {full ? (
-        <button className={`${styles.bookBtn} ${styles.bookFull}`} disabled>voll</button>
+        <button className={`${styles.bookBtn} ${styles.bookFull}`} disabled>ausgebucht</button>
       ) : (
         <Link to="/warenkorb" className={styles.bookBtn}>buchen →</Link>
       )}
