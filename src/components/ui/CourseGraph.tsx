@@ -5,41 +5,378 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { getAllCourses, type CourseData } from '../../data/courses'
 import styles from './CourseGraph.module.css'
 
-function makeSprite(text: string, sub: string, color: string): THREE.Sprite {
+// ─── Color palette ────────────────────────────────────────────────────────────
+const C = {
+  grass: 0x6ab04c,
+  grassDark: 0x5a9040,
+  asphalt: 0x3d3d3d,
+  asphaltLight: 0x555555,
+  sidewalk: 0xbfb29a,
+  buildingWarm: 0xf5ede0,
+  buildingBlue: 0xe8f0f8,
+  buildingGrey: 0xe0e0e0,
+  roofRed: 0xc44b2b,
+  roofBrown: 0x8b5e3c,
+  roofBlue: 0x2c5f8a,
+  treeGreen: 0x3a9e2f,
+  treeDark: 0x2d7a1f,
+  treeTrunk: 0x8b6914,
+  carRed: 0xd63031,
+  carBlue: 0x0984e3,
+  carYellow: 0xf9ca24,
+  carWhite: 0xffffff,
+  moto: 0x2c2c54,
+  ambulance: 0xfafafa,
+  ambulanceRed: 0xe74c3c,
+  truck: 0x2c3e50,
+  truckCargo: 0xecf0f1,
+  coneOrange: 0xe67e22,
+  lampPost: 0x8a8a8a,
+  lampLight: 0xfffff0,
+}
+
+// ─── Scene type ───────────────────────────────────────────────────────────────
+type SceneType = 'emergency' | 'motorcycle' | 'truck' | 'default'
+
+function getSceneType(course: CourseData): SceneType {
+  const s = course.slug
+  if (
+    s.includes('nothelfer') ||
+    s.includes('bls') ||
+    s.includes('erste-hilfe') ||
+    s.includes('refresher')
+  )
+    return 'emergency'
+  if (
+    s.includes('motorrad') ||
+    s.includes('kurventraining') ||
+    s.includes('schnupperkurs')
+  )
+    return 'motorcycle'
+  if (s.includes('czv') || course.categorySlug === 'chauffeur') return 'truck'
+  return 'default'
+}
+
+// ─── Material helper ──────────────────────────────────────────────────────────
+function flatMat(color: number): THREE.MeshLambertMaterial {
+  return new THREE.MeshLambertMaterial({ color, flatShading: true })
+}
+
+// ─── Building ─────────────────────────────────────────────────────────────────
+interface BuildingOpts {
+  w?: number
+  h?: number
+  d?: number
+  bodyColor?: number
+  roofColor?: number
+  roofStyle?: 'gabled' | 'flat' | 'hip'
+  hasCross?: boolean
+  slug?: string
+  name?: string
+  price?: string
+}
+
+function makeBuilding(opts: BuildingOpts): { group: THREE.Group; body: THREE.Mesh } {
+  const {
+    w = 2,
+    h = 2.5,
+    d = 2,
+    bodyColor = C.buildingWarm,
+    roofColor = C.roofRed,
+    roofStyle = 'gabled',
+    hasCross = false,
+    slug = '',
+    name = '',
+    price = '',
+  } = opts
+
+  const group = new THREE.Group()
+
+  // Body
+  const bodyGeo = new THREE.BoxGeometry(w, h, d)
+  const bodyMat = flatMat(bodyColor)
+  const body = new THREE.Mesh(bodyGeo, bodyMat)
+  body.position.y = h / 2
+  body.castShadow = true
+  body.userData = { slug, name, price }
+  group.add(body)
+
+  // Roof
+  if (roofStyle === 'gabled' || roofStyle === 'hip') {
+    const roofRadius = Math.sqrt(w * w + d * d) * 0.72
+    const roofHeight = w * 0.45
+    const roofGeo = new THREE.ConeGeometry(roofRadius, roofHeight, 4)
+    const roofMesh = new THREE.Mesh(roofGeo, flatMat(roofColor))
+    roofMesh.rotation.y = Math.PI / 4
+    roofMesh.position.y = h + roofHeight / 2
+    roofMesh.castShadow = true
+    group.add(roofMesh)
+  } else {
+    // flat roof — thin rim
+    const rimGeo = new THREE.BoxGeometry(w + 0.1, 0.12, d + 0.1)
+    const rim = new THREE.Mesh(rimGeo, flatMat(roofColor))
+    rim.position.y = h + 0.06
+    group.add(rim)
+  }
+
+  // Red cross for hospital/emergency
+  if (hasCross) {
+    const crossMat = new THREE.MeshLambertMaterial({ color: 0xe74c3c })
+    const hBar = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.12, 0.06), crossMat)
+    const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.55, 0.06), crossMat)
+    const crossY = h * 0.7
+    const frontZ = d / 2 + 0.04
+    hBar.position.set(0, crossY, frontZ)
+    vBar.position.set(0, crossY, frontZ)
+    group.add(hBar, vBar)
+  }
+
+  return { group, body }
+}
+
+// ─── Tree ─────────────────────────────────────────────────────────────────────
+function makeTree(x: number, z: number, scale = 1): THREE.Group {
+  const s = scale
+  const group = new THREE.Group()
+  group.position.set(x, 0, z)
+
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06 * s, 0.09 * s, 0.7 * s, 6),
+    flatMat(C.treeTrunk),
+  )
+  trunk.position.y = 0.35 * s
+
+  const leaves1 = new THREE.Mesh(
+    new THREE.ConeGeometry(0.52 * s, 1.2 * s, 7),
+    flatMat(C.treeGreen),
+  )
+  leaves1.position.y = 1.0 * s
+
+  const leaves2 = new THREE.Mesh(
+    new THREE.ConeGeometry(0.38 * s, 0.9 * s, 7),
+    flatMat(C.treeDark),
+  )
+  leaves2.position.y = 1.5 * s
+
+  group.add(trunk, leaves1, leaves2)
+  return group
+}
+
+// ─── Car ──────────────────────────────────────────────────────────────────────
+function makeCar(color: number): THREE.Group {
+  const group = new THREE.Group()
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.28, 1.4), flatMat(color))
+  body.position.y = 0.14
+  body.castShadow = true
+
+  const cabinColor = new THREE.Color(color).multiplyScalar(0.82).getHex()
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.24, 0.7), flatMat(cabinColor))
+  cabin.position.set(0, 0.42, -0.05)
+
+  const glass = new THREE.Mesh(
+    new THREE.BoxGeometry(0.53, 0.22, 0.03),
+    new THREE.MeshLambertMaterial({ color: 0xaed6f1, transparent: true, opacity: 0.7 }),
+  )
+  glass.position.set(0, 0.42, -0.39)
+
+  // 4 wheels
+  const wheelGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 8)
+  const wheelMat = flatMat(0x222222)
+  const wheelPositions: [number, number, number][] = [
+    [-0.38, 0.12, -0.45],
+    [0.38, 0.12, -0.45],
+    [-0.38, 0.12, 0.45],
+    [0.38, 0.12, 0.45],
+  ]
+  wheelPositions.forEach(([wx, wy, wz]) => {
+    const w = new THREE.Mesh(wheelGeo, wheelMat)
+    w.rotation.z = Math.PI / 2
+    w.position.set(wx, wy, wz)
+    group.add(w)
+  })
+
+  group.add(body, cabin, glass)
+  return group
+}
+
+// ─── Ambulance ────────────────────────────────────────────────────────────────
+function makeAmbulance(): THREE.Group {
+  const group = makeCar(C.ambulance)
+
+  const stripe = new THREE.Mesh(
+    new THREE.BoxGeometry(0.72, 0.1, 1.42),
+    flatMat(C.ambulanceRed),
+  )
+  stripe.position.y = 0.12
+
+  const crossH = new THREE.Mesh(
+    new THREE.BoxGeometry(0.22, 0.06, 0.04),
+    flatMat(C.ambulanceRed),
+  )
+  const crossV = new THREE.Mesh(
+    new THREE.BoxGeometry(0.06, 0.22, 0.04),
+    flatMat(C.ambulanceRed),
+  )
+  crossH.position.set(0.36, 0.22, -0.5)
+  crossV.position.set(0.36, 0.22, -0.5)
+
+  group.add(stripe, crossH, crossV)
+  return group
+}
+
+// ─── Motorcycle ───────────────────────────────────────────────────────────────
+function makeMotorcycle(color: number): THREE.Group {
+  const group = new THREE.Group()
+
+  const tank = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.8), flatMat(color))
+  tank.position.y = 0.42
+
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.06, 0.38), flatMat(0x1a1a1a))
+  seat.position.set(0, 0.55, 0.1)
+
+  const handlebar = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.05, 0.06), flatMat(0x888888))
+  handlebar.position.set(0, 0.62, -0.38)
+
+  const wheelMat = flatMat(0x222222)
+  const wheelGeo = new THREE.TorusGeometry(0.2, 0.05, 6, 12)
+
+  const frontWheel = new THREE.Mesh(wheelGeo, wheelMat)
+  frontWheel.rotation.y = Math.PI / 2
+  frontWheel.position.set(0, 0.2, -0.45)
+
+  const rearWheel = new THREE.Mesh(wheelGeo, wheelMat)
+  rearWheel.rotation.y = Math.PI / 2
+  rearWheel.position.set(0, 0.2, 0.45)
+
+  group.add(tank, seat, handlebar, frontWheel, rearWheel)
+  return group
+}
+
+// ─── Truck ────────────────────────────────────────────────────────────────────
+function makeTruck(color: number): THREE.Group {
+  const group = new THREE.Group()
+
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 1.0), flatMat(color))
+  cabin.position.set(0, 0.35, -1.0)
+  cabin.castShadow = true
+
+  const cargo = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.75, 1.9), flatMat(C.truckCargo))
+  cargo.position.set(0, 0.375, 0.3)
+  cargo.castShadow = true
+
+  const wheelMat = flatMat(0x222222)
+  const wheelGeo = new THREE.CylinderGeometry(0.14, 0.14, 0.12, 8)
+  const wheelPos: [number, number, number][] = [
+    [-0.48, 0.14, -1.2],
+    [0.48, 0.14, -1.2],
+    [-0.48, 0.14, 0.1],
+    [0.48, 0.14, 0.1],
+    [-0.48, 0.14, 0.9],
+    [0.48, 0.14, 0.9],
+  ]
+  wheelPos.forEach(([wx, wy, wz]) => {
+    const w = new THREE.Mesh(wheelGeo, wheelMat)
+    w.rotation.z = Math.PI / 2
+    w.position.set(wx, wy, wz)
+    group.add(w)
+  })
+
+  group.add(cabin, cargo)
+  return group
+}
+
+// ─── Traffic cone ─────────────────────────────────────────────────────────────
+function makeTrafficCone(x: number, z: number): THREE.Mesh {
+  const cone = new THREE.Mesh(
+    new THREE.ConeGeometry(0.1, 0.32, 6),
+    flatMat(C.coneOrange),
+  )
+  cone.position.set(x, 0.16, z)
+  return cone
+}
+
+// ─── Street light ─────────────────────────────────────────────────────────────
+function makeStreetLight(x: number, z: number): THREE.Group {
+  const group = new THREE.Group()
+
+  const pole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.04, 0.05, 2.8, 6),
+    flatMat(C.lampPost),
+  )
+  pole.position.set(x, 1.4, z)
+
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.06, 0.06), flatMat(C.lampPost))
+  arm.position.set(x + 0.2, 2.72, z)
+
+  const bulb = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 6, 4),
+    new THREE.MeshLambertMaterial({ color: C.lampLight, emissive: C.lampLight, emissiveIntensity: 0.6 }),
+  )
+  bulb.position.set(x + 0.4, 2.72, z)
+
+  group.add(pole, arm, bulb)
+  return group
+}
+
+// ─── Road dashed line ─────────────────────────────────────────────────────────
+function makeRoadLine(x: number, z: number, horizontal: boolean): THREE.Mesh {
+  const w = horizontal ? 1.0 : 0.1
+  const d = horizontal ? 0.1 : 1.0
+  const line = new THREE.Mesh(
+    new THREE.BoxGeometry(w, 0.02, d),
+    new THREE.MeshLambertMaterial({ color: 0xffffff }),
+  )
+  line.position.set(x, 0.02, z)
+  return line
+}
+
+// ─── Sprite label ─────────────────────────────────────────────────────────────
+function makeLabel(name: string, price: string, color: string): THREE.Sprite {
   const canvas = document.createElement('canvas')
-  canvas.width = 280
-  canvas.height = 72
+  canvas.width = 256
+  canvas.height = 64
   const ctx = canvas.getContext('2d')!
 
-  ctx.fillStyle = 'rgba(13,27,42,0.9)'
-  ctx.beginPath()
+  ctx.fillStyle = 'rgba(255,255,255,0.93)'
   if (ctx.roundRect) {
-    ctx.roundRect(3, 3, 274, 66, 10)
+    ctx.roundRect(2, 2, 252, 60, 8)
   } else {
-    ctx.rect(3, 3, 274, 66)
+    ctx.rect(2, 2, 252, 60)
   }
   ctx.fill()
   ctx.strokeStyle = color
-  ctx.lineWidth = 1.5
+  ctx.lineWidth = 2
   ctx.stroke()
 
-  ctx.fillStyle = '#ffffff'
-  ctx.font = 'bold 20px sans-serif'
+  ctx.fillStyle = '#1D1D1B'
+  ctx.font = 'bold 18px sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'alphabetic'
-  ctx.fillText(text.length > 14 ? text.slice(0, 13) + '…' : text, 140, 38)
+  ctx.fillText(name.length > 16 ? name.slice(0, 15) + '…' : name, 128, 34)
 
   ctx.fillStyle = color
   ctx.font = '13px sans-serif'
-  ctx.fillText(sub, 140, 56)
+  ctx.fillText(price, 128, 52)
 
   const tex = new THREE.CanvasTexture(canvas)
-  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false })
-  const sprite = new THREE.Sprite(mat)
-  sprite.scale.set(3.2, 0.82, 1)
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }),
+  )
+  sprite.scale.set(3.0, 0.75, 1)
   return sprite
 }
 
+// ─── Vehicle animation state ──────────────────────────────────────────────────
+interface AnimVehicle {
+  group: THREE.Group
+  waypoints: THREE.Vector3[]
+  segment: number
+  progress: number
+  speed: number
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function CourseGraph({ course }: { course: CourseData }) {
   const mountRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -51,283 +388,489 @@ export default function CourseGraph({ course }: { course: CourseData }) {
     if (!mountRef.current || !tooltipDiv) return
 
     const allCourses = getAllCourses()
+    const sceneType = getSceneType(course)
 
-    // ── Scene ────────────────────────────────────────────────────────────────
+    // ── Scene ─────────────────────────────────────────────────────────────────
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color('#0d1b2a')
-    scene.fog = new THREE.FogExp2('#0d1b2a', 0.028)
+    scene.background = new THREE.Color('#d4eaf7')
 
-    // ── Camera ───────────────────────────────────────────────────────────────
+    // ── Camera ────────────────────────────────────────────────────────────────
     const width = mount.clientWidth
     const height = mount.clientHeight
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 200)
-    camera.position.set(0, 3, 14)
+    camera.position.set(0, 14, 13)
+    camera.lookAt(0, 0, 0)
 
-    // ── Renderer ─────────────────────────────────────────────────────────────
+    // ── Renderer ──────────────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setSize(width, height)
     mount.appendChild(renderer.domElement)
 
-    // ── Lights ───────────────────────────────────────────────────────────────
-    const ambient = new THREE.AmbientLight(0xffffff, 0.35)
-    scene.add(ambient)
+    // ── Lights ────────────────────────────────────────────────────────────────
+    scene.add(new THREE.HemisphereLight(0x87ceeb, 0x6ab04c, 0.7))
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6)
-    dirLight.position.set(5, 10, 5)
-    scene.add(dirLight)
+    const sun = new THREE.DirectionalLight(0xfff5e0, 1.1)
+    sun.position.set(10, 20, 5)
+    sun.castShadow = true
+    sun.shadow.mapSize.width = 1024
+    sun.shadow.mapSize.height = 1024
+    scene.add(sun)
 
-    const pointLight = new THREE.PointLight(0x087283, 2.5, 10)
-    pointLight.position.set(0, 0, 0)
-    scene.add(pointLight)
+    const fill = new THREE.DirectionalLight(0xd0e8ff, 0.3)
+    fill.position.set(-8, 5, -5)
+    scene.add(fill)
 
-    // ── Grid ─────────────────────────────────────────────────────────────────
-    const grid = new THREE.GridHelper(40, 40, '#0e2233', '#0e2233')
-    grid.position.y = -4
-    scene.add(grid)
+    // ── Ground ────────────────────────────────────────────────────────────────
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(40, 40),
+      flatMat(C.grass),
+    )
+    ground.rotation.x = -Math.PI / 2
+    ground.position.y = -0.01
+    ground.receiveShadow = true
+    scene.add(ground)
 
-    // ── Stars ────────────────────────────────────────────────────────────────
-    const starPositions: number[] = []
-    for (let i = 0; i < 400; i++) {
-      starPositions.push(
-        (Math.random() - 0.5) * 80,
-        (Math.random() - 0.5) * 80,
-        (Math.random() - 0.5) * 80
-      )
+    // ── Road network ──────────────────────────────────────────────────────────
+    // Main horizontal road
+    const mainRoad = new THREE.Mesh(
+      new THREE.BoxGeometry(40, 0.02, 4),
+      flatMat(C.asphalt),
+    )
+    mainRoad.position.set(0, 0.01, 0)
+    mainRoad.receiveShadow = true
+    scene.add(mainRoad)
+
+    // Cross vertical road
+    const crossRoad = new THREE.Mesh(
+      new THREE.BoxGeometry(4, 0.02, 40),
+      flatMat(C.asphalt),
+    )
+    crossRoad.position.set(0, 0.01, 0)
+    crossRoad.receiveShadow = true
+    scene.add(crossRoad)
+
+    // Sidewalks alongside main road
+    const swMat = flatMat(C.sidewalk)
+    const sw1 = new THREE.Mesh(new THREE.BoxGeometry(40, 0.015, 0.8), swMat)
+    sw1.position.set(0, 0.008, -2.4)
+    scene.add(sw1)
+    const sw2 = new THREE.Mesh(new THREE.BoxGeometry(40, 0.015, 0.8), swMat)
+    sw2.position.set(0, 0.008, 2.4)
+    scene.add(sw2)
+
+    // Road dashed center lines (horizontal road)
+    for (let x = -18; x <= 18; x += 2.5) {
+      scene.add(makeRoadLine(x, 0, true))
     }
-    const starGeo = new THREE.BufferGeometry()
-    starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3))
-    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.55 })
-    scene.add(new THREE.Points(starGeo, starMat))
+    // Vertical road center lines
+    for (let z = -18; z <= 18; z += 2.5) {
+      scene.add(makeRoadLine(0, z, false))
+    }
 
-    // ── Classify courses ──────────────────────────────────────────────────────
-    const prereqSlugs = new Set(course.prerequisites.map(p => p.slug))
-    const nextSlugs = new Set(course.nextSteps.map(n => n.slug))
+    // ── Street lights ─────────────────────────────────────────────────────────
+    for (let x = -16; x <= 16; x += 4) {
+      scene.add(makeStreetLight(x, -2.9))
+      scene.add(makeStreetLight(x, 2.9))
+    }
 
+    // ── Trees scattered on grass ──────────────────────────────────────────────
+    const treePosArr: [number, number, number][] = [
+      [-16, 0, -6], [-13, 0, -7], [-10, 0, -5], [-7, 0, -8],
+      [-16, 0, 6],  [-13, 0, 7],  [-10, 0, 5],  [-7, 0, 9],
+      [8, 0, -6],   [11, 0, -8],  [14, 0, -5],  [16, 0, -7],
+      [8, 0, 7],    [11, 0, 6],   [14, 0, 9],   [16, 0, 7],
+    ]
+    treePosArr.forEach(([tx, , tz]) => scene.add(makeTree(tx, tz, 0.8 + Math.random() * 0.4)))
+
+    // ── Classify related courses ──────────────────────────────────────────────
+    const prereqCourses = allCourses.filter(c =>
+      course.prerequisites.some(p => p.slug === c.slug),
+    )
+    const nextCourses = allCourses.filter(c =>
+      course.nextSteps.some(n => n.slug === c.slug),
+    )
     const otherCourses = allCourses.filter(
-      c => c.slug !== course.slug && !prereqSlugs.has(c.slug) && !nextSlugs.has(c.slug)
+      c =>
+        c.slug !== course.slug &&
+        !course.prerequisites.some(p => p.slug === c.slug) &&
+        !course.nextSteps.some(n => n.slug === c.slug),
     )
 
-    // ── Node mesh storage ────────────────────────────────────────────────────
-    interface NodeMeta {
-      mesh: THREE.Mesh
-      slug: string
-      name: string
-      icon: string
-      price: string
+    // ── clickable body meshes for raycasting ──────────────────────────────────
+    const clickableMeshes: THREE.Mesh[] = []
+
+    // ── Label sprite tracking (for bob animation) ─────────────────────────────
+    interface LabelInfo {
+      sprite: THREE.Sprite
       baseY: number
-      floatIndex: number
-      isOther: boolean
-      baseMaterial: THREE.MeshPhongMaterial
+      index: number
     }
-    const nodes: NodeMeta[] = []
-    const allMeshes: THREE.Mesh[] = []
+    const labelSprites: LabelInfo[] = []
 
-    function addNode(
-      pos: THREE.Vector3,
-      radius: number,
-      color: string,
-      emissive: string,
-      emissiveIntensity: number,
-      shininess: number,
-      slug: string,
-      name: string,
-      icon: string,
-      price: string,
-      isOther: boolean,
-      floatIndex: number,
-      labelText?: string,
-      labelSub?: string,
-      labelColor?: string
-    ) {
-      const geo = new THREE.SphereGeometry(radius, 32, 32)
-      const mat = new THREE.MeshPhongMaterial({
-        color: new THREE.Color(color),
-        emissive: new THREE.Color(emissive),
-        emissiveIntensity,
-        shininess,
-      })
-      const mesh = new THREE.Mesh(geo, mat)
-      mesh.position.copy(pos)
-      scene.add(mesh)
-      allMeshes.push(mesh)
+    // ── Helper: place a building at a position ────────────────────────────────
+    function placeBuilding(
+      opts: BuildingOpts,
+      x: number,
+      z: number,
+      labelColor: string,
+      labelIndex: number,
+    ): THREE.Group {
+      const { group, body } = makeBuilding(opts)
+      group.position.set(x, 0, z)
+      scene.add(group)
+      clickableMeshes.push(body)
 
-      nodes.push({
-        mesh,
-        slug,
-        name,
-        icon,
-        price,
-        baseY: pos.y,
-        floatIndex,
-        isOther,
-        baseMaterial: mat,
-      })
-
-      if (labelText !== undefined && labelSub !== undefined && labelColor !== undefined) {
-        const sprite = makeSprite(labelText, labelSub, labelColor)
-        sprite.position.copy(pos).add(new THREE.Vector3(0, radius + 0.9, 0))
-        scene.add(sprite)
+      if (opts.name && opts.slug) {
+        const h = opts.h ?? 2.5
+        const baseY = h + 1.2
+        const label = makeLabel(opts.name, opts.price ?? '', labelColor)
+        label.position.set(x, baseY, z)
+        scene.add(label)
+        labelSprites.push({ sprite: label, baseY, index: labelIndex })
       }
 
-      return mesh
+      return group
     }
 
-    // ── Current course node ───────────────────────────────────────────────────
-    const currentPos = new THREE.Vector3(0, 0, 0)
-    const currentRadius = 0.8
-    addNode(
-      currentPos,
-      currentRadius,
-      '#087283', '#087283', 0.4, 90,
-      course.slug, course.name, course.icon, course.price,
-      false, 0,
-      course.shortName, 'DIESER KURS', '#087283'
+    // ── Current course building ───────────────────────────────────────────────
+    let curBodyColor = C.buildingWarm
+    let curRoofColor = C.roofRed
+    let curRoofStyle: 'gabled' | 'flat' | 'hip' = 'gabled'
+    let curHasCross = false
+    const curW = 3, curH = 3.5, curD = 3
+
+    if (sceneType === 'emergency') {
+      curBodyColor = 0xfafafa
+      curRoofColor = 0xcccccc
+      curRoofStyle = 'flat'
+      curHasCross = true
+    } else if (sceneType === 'motorcycle') {
+      curBodyColor = 0x4a4a4a
+      curRoofColor = 0x333333
+      curRoofStyle = 'flat'
+    } else if (sceneType === 'truck') {
+      curBodyColor = C.buildingGrey
+      curRoofColor = 0xbbbbbb
+      curRoofStyle = 'flat'
+    }
+
+    placeBuilding(
+      {
+        w: curW, h: curH, d: curD,
+        bodyColor: curBodyColor,
+        roofColor: curRoofColor,
+        roofStyle: curRoofStyle,
+        hasCross: curHasCross,
+        slug: course.slug,
+        name: course.shortName,
+        price: course.price,
+      },
+      -3, -4,
+      '#087283',
+      0,
     )
 
-    // Glow sphere
-    const glowGeo = new THREE.SphereGeometry(currentRadius * 1.5, 32, 32)
-    const glowMat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color('#087283'),
+    // Ground ring / halo around current building
+    const ringGeo = new THREE.RingGeometry(1.8, 2.0, 32)
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x087283,
       transparent: true,
-      opacity: 0.1,
-      side: THREE.BackSide,
-    })
-    const glowMesh = new THREE.Mesh(glowGeo, glowMat)
-    glowMesh.position.copy(currentPos)
-    scene.add(glowMesh)
-
-    // Pulsing rings
-    const ringGeo = new THREE.RingGeometry(1.05, 1.18, 64)
-    const ring1Mat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color('#087283'),
-      transparent: true,
-      opacity: 0.25,
+      opacity: 0.4,
       side: THREE.DoubleSide,
     })
-    const ring1 = new THREE.Mesh(ringGeo, ring1Mat)
-    ring1.position.copy(currentPos)
-    scene.add(ring1)
+    const groundRing = new THREE.Mesh(ringGeo, ringMat)
+    groundRing.rotation.x = -Math.PI / 2
+    groundRing.position.set(-3, 0.03, -4)
+    scene.add(groundRing)
 
-    const ring2Mat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color('#087283'),
-      transparent: true,
-      opacity: 0.25,
-      side: THREE.DoubleSide,
-    })
-    const ring2 = new THREE.Mesh(ringGeo.clone(), ring2Mat)
-    ring2.position.copy(currentPos)
-    ring2.rotation.x = Math.PI / 4
-    scene.add(ring2)
-
-    // ── Prerequisite nodes ────────────────────────────────────────────────────
-    const prereqTotal = course.prerequisites.length
-    const prereqMeshes: THREE.Mesh[] = []
-
-    course.prerequisites.forEach((p, idx) => {
-      const y = prereqTotal === 1 ? 0 : (idx - (prereqTotal - 1) / 2) * 2.0
-      const pos = new THREE.Vector3(-4.5, y, 0)
-      const pCourse = allCourses.find(c => c.slug === p.slug)
-      const price = pCourse?.price ?? ''
-      const mesh = addNode(
-        pos, 0.45,
-        '#e65100', '#e65100', 0.25, 70,
-        p.slug, p.name, p.icon, price,
-        false, idx,
-        p.name, price, '#e65100'
+    // Arrow on road pointing toward current building from prereq side
+    if (prereqCourses.length > 0) {
+      const arrow = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 0.02, 0.18),
+        new THREE.MeshLambertMaterial({ color: 0xe65100 }),
       )
-      prereqMeshes.push(mesh)
-    })
-
-    // ── Next step nodes ───────────────────────────────────────────────────────
-    const nextTotal = course.nextSteps.length
-    const nextMeshes: THREE.Mesh[] = []
-
-    course.nextSteps.forEach((n, idx) => {
-      const y = nextTotal === 1 ? 0 : (idx - (nextTotal - 1) / 2) * 2.0
-      const pos = new THREE.Vector3(4.5, y, 0)
-      const nCourse = allCourses.find(c => c.slug === n.slug)
-      const price = nCourse?.price ?? ''
-      const mesh = addNode(
-        pos, 0.45,
-        '#2e7d32', '#2e7d32', 0.25, 70,
-        n.slug, n.name, n.icon, price,
-        false, idx,
-        n.name, price, '#2e7d32'
+      arrow.position.set(-6, 0.03, -4)
+      scene.add(arrow)
+      // Arrowhead triangle approximated with a small cone
+      const tip = new THREE.Mesh(
+        new THREE.ConeGeometry(0.14, 0.32, 4),
+        new THREE.MeshLambertMaterial({ color: 0xe65100 }),
       )
-      nextMeshes.push(mesh)
-    })
-
-    // ── Other course nodes ────────────────────────────────────────────────────
-    otherCourses.forEach((c, i) => {
-      const angle = (i / otherCourses.length) * Math.PI * 2
-      const pos = new THREE.Vector3(
-        Math.cos(angle) * 9,
-        Math.sin(angle * 0.7) * 2.5,
-        Math.sin(angle) * 5
-      )
-      addNode(
-        pos, 0.32,
-        '#1e3a5f', '#0a1f35', 0.1, 40,
-        c.slug, c.name, c.icon, c.price,
-        true, i
-      )
-    })
-
-    // ── Connections ───────────────────────────────────────────────────────────
-    function makeConnection(from: THREE.Vector3, to: THREE.Vector3, color: string) {
-      const mid = from.clone().add(to).multiplyScalar(0.5)
-      mid.y += 0.8
-      const curve = new THREE.QuadraticBezierCurve3(from, mid, to)
-      const tubeGeo = new THREE.TubeGeometry(curve, 32, 0.025, 8, false)
-      const tubeMat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(color),
-        transparent: true,
-        opacity: 0.65,
-      })
-      const tube = new THREE.Mesh(tubeGeo, tubeMat)
-      scene.add(tube)
+      tip.rotation.z = -Math.PI / 2
+      tip.position.set(-5.3, 0.03, -4)
+      scene.add(tip)
     }
 
-    prereqMeshes.forEach(mesh => {
-      makeConnection(mesh.position.clone(), currentPos.clone(), '#e65100')
+    // ── Prerequisite buildings ────────────────────────────────────────────────
+    prereqCourses.forEach((pc, idx) => {
+      const x = -8 - idx * 4
+      placeBuilding(
+        {
+          w: 2, h: 2.5, d: 2,
+          bodyColor: 0xfde8d8,
+          roofColor: 0xc0603a,
+          roofStyle: 'gabled',
+          slug: pc.slug,
+          name: pc.shortName,
+          price: pc.price,
+        },
+        x, -4,
+        '#e65100',
+        idx + 1,
+      )
     })
 
-    nextMeshes.forEach(mesh => {
-      makeConnection(currentPos.clone(), mesh.position.clone(), '#2e7d32')
+    // ── Next step buildings ───────────────────────────────────────────────────
+    nextCourses.forEach((nc, idx) => {
+      const x = 3 + idx * 4
+      placeBuilding(
+        {
+          w: 2, h: 2.5, d: 2,
+          bodyColor: 0xdff0e0,
+          roofColor: 0x2e7d32,
+          roofStyle: 'gabled',
+          slug: nc.slug,
+          name: nc.shortName,
+          price: nc.price,
+        },
+        x, -4,
+        '#2e7d32',
+        idx + prereqCourses.length + 1,
+      )
     })
+
+    // ── Other course buildings (small, scattered) ──────────────────────────────
+    const otherPositions: [number, number][] = [
+      [-14, 5], [-10, 7], [-6, 6], [-2, 7], [3, 6], [7, 7], [11, 5], [15, 6],
+      [-12, -9], [-8, -8], [-4, -9], [2, -8], [6, -9], [10, -8],
+    ]
+    otherCourses.slice(0, otherPositions.length).forEach((oc, idx) => {
+      const [ox, oz] = otherPositions[idx]
+      const { group, body } = makeBuilding({
+        w: 1.5, h: 2, d: 1.5,
+        bodyColor: 0xd8e4ec,
+        roofColor: 0x5a7a8a,
+        roofStyle: 'gabled',
+        slug: oc.slug,
+        name: oc.shortName,
+        price: oc.price,
+      })
+      group.position.set(ox, 0, oz)
+      scene.add(group)
+      clickableMeshes.push(body)
+    })
+
+    // ── Vehicle animation state ────────────────────────────────────────────────
+    const animVehicles: AnimVehicle[] = []
+
+    // ── Scene-specific elements ────────────────────────────────────────────────
+    if (sceneType === 'emergency') {
+      // Ambulance on road
+      const ambulance = makeAmbulance()
+      ambulance.position.set(1, 0.05, 1)
+      scene.add(ambulance)
+      animVehicles.push({
+        group: ambulance,
+        waypoints: [
+          new THREE.Vector3(-14, 0.05, -1),
+          new THREE.Vector3(14, 0.05, -1),
+          new THREE.Vector3(14, 0.05, 1),
+          new THREE.Vector3(-14, 0.05, 1),
+        ],
+        segment: 0,
+        progress: 0,
+        speed: 0.35,
+      })
+
+      // Manikin approximations (sphere + cylinder)
+      const manikinMat = flatMat(0xf39c12)
+      for (let i = 0; i < 2; i++) {
+        const manikin = new THREE.Group()
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), manikinMat)
+        torso.position.y = 0.25
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), manikinMat)
+        head.position.y = 0.6
+        manikin.add(torso, head)
+        manikin.position.set(-1.5 + i * 0.7, 0, -3)
+        scene.add(manikin)
+      }
+
+      // Emergency cone cluster at intersection
+      const coneRing = [
+        [0.6, 0.6], [-0.6, 0.6], [0.6, -0.6], [-0.6, -0.6],
+      ] as [number, number][]
+      coneRing.forEach(([cx, cz]) => scene.add(makeTrafficCone(cx, cz)))
+
+      // Extra trees around hospital
+      scene.add(makeTree(-6, -6, 0.9))
+      scene.add(makeTree(-1, -7, 1.0))
+      scene.add(makeTree(-5, -2, 0.85))
+
+    } else if (sceneType === 'motorcycle') {
+      // Oval of cones for training area
+      const coneCount = 8
+      for (let i = 0; i < coneCount; i++) {
+        const angle = (i / coneCount) * Math.PI * 2
+        const cx = 5 + Math.cos(angle) * 2.8
+        const cz = 4 + Math.sin(angle) * 1.6
+        scene.add(makeTrafficCone(cx, cz))
+      }
+
+      // Slalom cones along road center
+      for (let z = -8; z <= 8; z += 2.2) {
+        scene.add(makeTrafficCone(0, z))
+      }
+
+      // Parked motorcycle
+      const motoParked = makeMotorcycle(C.moto)
+      motoParked.position.set(-1, 0.05, -2.5)
+      scene.add(motoParked)
+
+      // Animated motorcycle on road
+      const motoDriving = makeMotorcycle(0x6c5ce7)
+      motoDriving.position.set(-10, 0.05, -1)
+      scene.add(motoDriving)
+      animVehicles.push({
+        group: motoDriving,
+        waypoints: [
+          new THREE.Vector3(4, 0.05, 3),
+          new THREE.Vector3(7, 0.05, 5.5),
+          new THREE.Vector3(4, 0.05, 7),
+          new THREE.Vector3(3, 0.05, 5),
+        ],
+        segment: 0,
+        progress: 0,
+        speed: 0.28,
+      })
+
+    } else if (sceneType === 'truck') {
+      // Warehouse loading dock
+      const dock = new THREE.Mesh(
+        new THREE.BoxGeometry(4, 0.2, 2),
+        flatMat(0xaaaaaa),
+      )
+      dock.position.set(-4.5, 0.1, -6.5)
+      scene.add(dock)
+
+      // Wide road markings for truck
+      for (let x2 = -18; x2 <= 18; x2 += 3) {
+        const wm = new THREE.Mesh(
+          new THREE.BoxGeometry(1.4, 0.02, 0.15),
+          new THREE.MeshLambertMaterial({ color: 0xffff00 }),
+        )
+        wm.position.set(x2, 0.025, 1.8)
+        scene.add(wm)
+      }
+
+      // Animated truck
+      const truck = makeTruck(C.truck)
+      truck.position.set(-12, 0.05, -1)
+      scene.add(truck)
+      animVehicles.push({
+        group: truck,
+        waypoints: [
+          new THREE.Vector3(-15, 0.05, -1),
+          new THREE.Vector3(15, 0.05, -1),
+          new THREE.Vector3(15, 0.05, 1),
+          new THREE.Vector3(-15, 0.05, 1),
+        ],
+        segment: 0,
+        progress: 0,
+        speed: 0.18,
+      })
+
+    } else {
+      // Default — school building extras
+      // Parking area
+      const parking = new THREE.Mesh(
+        new THREE.BoxGeometry(4.5, 0.015, 3),
+        flatMat(0x555555),
+      )
+      parking.position.set(-3, 0.005, -7.5)
+      scene.add(parking)
+
+      // Two cars animated
+      const car1 = makeCar(C.carRed)
+      car1.position.set(-10, 0.05, -1)
+      scene.add(car1)
+      animVehicles.push({
+        group: car1,
+        waypoints: [
+          new THREE.Vector3(-15, 0.08, -1),
+          new THREE.Vector3(15, 0.08, -1),
+          new THREE.Vector3(15, 0.08, 1),
+          new THREE.Vector3(-15, 0.08, 1),
+        ],
+        segment: 0,
+        progress: 0.25,
+        speed: 0.3,
+      })
+
+      const car2 = makeCar(C.carBlue)
+      car2.position.set(6, 0.05, 1)
+      scene.add(car2)
+      animVehicles.push({
+        group: car2,
+        waypoints: [
+          new THREE.Vector3(15, 0.08, 1),
+          new THREE.Vector3(-15, 0.08, 1),
+          new THREE.Vector3(-15, 0.08, -1),
+          new THREE.Vector3(15, 0.08, -1),
+        ],
+        segment: 0,
+        progress: 0.5,
+        speed: 0.22,
+      })
+
+      // Signpost near school
+      const post = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6),
+        flatMat(C.lampPost),
+      )
+      post.position.set(-0.5, 0.8, -2.8)
+      const sign = new THREE.Mesh(
+        new THREE.BoxGeometry(0.7, 0.3, 0.05),
+        flatMat(0x087283),
+      )
+      sign.position.set(0.15, 1.55, -2.8)
+      scene.add(post, sign)
+    }
 
     // ── OrbitControls ─────────────────────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
     controls.dampingFactor = 0.08
     controls.autoRotate = true
-    controls.autoRotateSpeed = 0.4
-    controls.maxDistance = 24
-    controls.minDistance = 4
+    controls.autoRotateSpeed = 0.25
+    controls.maxPolarAngle = Math.PI / 2.2
+    controls.minDistance = 8
+    controls.maxDistance = 30
     controls.enablePan = false
 
     // ── Raycasting ────────────────────────────────────────────────────────────
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
-    let hoveredNode: NodeMeta | null = null
+    let hoveredMesh: THREE.Mesh | null = null
 
-    function showTooltip(node: NodeMeta, x: number, y: number) {
-      if (!tooltipDiv) return
-      tooltipDiv.style.display = 'block'
-      tooltipDiv.style.left = x + 'px'
-      tooltipDiv.style.top = y + 'px'
-      tooltipDiv.innerHTML = `
-        <div style="font-size:22px;margin-bottom:4px">${node.icon}</div>
-        <div style="color:#fff;font-size:13px;font-weight:600;margin-bottom:2px">${node.name}</div>
-        <div style="color:#087283;font-size:12px">${node.price}</div>
-        ${node.slug !== course.slug ? '<div style="color:rgba(255,255,255,0.4);font-size:11px;margin-top:6px">Klicken zum Öffnen →</div>' : ''}
+    const ttip = tooltipDiv!
+    function showTooltip(mesh: THREE.Mesh, clientX: number, clientY: number) {
+      const rect = mount.getBoundingClientRect()
+      const { slug, name, price } = mesh.userData as { slug: string; name: string; price: string }
+      ttip.style.display = 'block'
+      ttip.style.left = clientX - rect.left + 'px'
+      ttip.style.top = clientY - rect.top + 'px'
+      ttip.innerHTML = `
+        <div style="font-size:13px;font-weight:700;color:#1D1D1B;margin-bottom:3px">${name}</div>
+        <div style="font-size:12px;color:#087283;font-weight:600">${price}</div>
+        ${slug !== course.slug ? '<div style="font-size:11px;color:#6B7280;margin-top:5px">Klicken zum Öffnen →</div>' : '<div style="font-size:11px;color:#087283;margin-top:5px">Dieser Kurs</div>'}
       `
     }
 
     function hideTooltip() {
-      if (!tooltipDiv) return
-      tooltipDiv.style.display = 'none'
+      ttip.style.display = 'none'
     }
 
     function onMouseMove(e: MouseEvent) {
@@ -336,31 +879,25 @@ export default function CourseGraph({ course }: { course: CourseData }) {
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
 
       raycaster.setFromCamera(mouse, camera)
-      const hits = raycaster.intersectObjects(allMeshes)
+      const hits = raycaster.intersectObjects(clickableMeshes)
 
       if (hits.length > 0) {
-        const hitMesh = hits[0].object as THREE.Mesh
-        const node = nodes.find(n => n.mesh === hitMesh)
-        if (node) {
-          if (hoveredNode && hoveredNode !== node) {
-            hoveredNode.baseMaterial.emissiveIntensity = hoveredNode.isOther ? 0.1 : 0.25
-            if (hoveredNode.slug === course.slug) hoveredNode.baseMaterial.emissiveIntensity = 0.4
-          }
-          hoveredNode = node
-          node.baseMaterial.emissiveIntensity = 0.7
-          mount.style.cursor = 'pointer'
-          showTooltip(node, e.clientX - rect.left, e.clientY - rect.top)
-          return
+        const hit = hits[0].object as THREE.Mesh
+        if (hoveredMesh && hoveredMesh !== hit) {
+          hoveredMesh.scale.set(1, 1, 1)
         }
+        hoveredMesh = hit
+        hit.scale.set(1, 1.05, 1)
+        mount.style.cursor = 'pointer'
+        showTooltip(hit, e.clientX, e.clientY)
+      } else {
+        if (hoveredMesh) {
+          hoveredMesh.scale.set(1, 1, 1)
+          hoveredMesh = null
+        }
+        mount.style.cursor = 'grab'
+        hideTooltip()
       }
-
-      if (hoveredNode) {
-        hoveredNode.baseMaterial.emissiveIntensity = hoveredNode.isOther ? 0.1 : 0.25
-        if (hoveredNode.slug === course.slug) hoveredNode.baseMaterial.emissiveIntensity = 0.4
-        hoveredNode = null
-      }
-      mount.style.cursor = 'grab'
-      hideTooltip()
     }
 
     function onClick(e: MouseEvent) {
@@ -369,13 +906,13 @@ export default function CourseGraph({ course }: { course: CourseData }) {
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
 
       raycaster.setFromCamera(mouse, camera)
-      const hits = raycaster.intersectObjects(allMeshes)
+      const hits = raycaster.intersectObjects(clickableMeshes)
 
       if (hits.length > 0) {
-        const hitMesh = hits[0].object as THREE.Mesh
-        const node = nodes.find(n => n.mesh === hitMesh)
-        if (node && node.slug !== course.slug) {
-          navigate('/kurs/' + node.slug)
+        const hit = hits[0].object as THREE.Mesh
+        const { slug } = hit.userData as { slug: string }
+        if (slug && slug !== course.slug) {
+          navigate('/kurs/' + slug)
         }
       }
     }
@@ -393,35 +930,38 @@ export default function CourseGraph({ course }: { course: CourseData }) {
     }
     window.addEventListener('resize', onResize)
 
-    // ── Animation ─────────────────────────────────────────────────────────────
+    // ── Animation loop ────────────────────────────────────────────────────────
     const clock = new THREE.Clock()
     let animId: number
-
-    const currentNode = nodes[0]
+    let elapsed = 0
 
     function animate() {
       animId = requestAnimationFrame(animate)
-      const t = clock.getElapsedTime()
+      const delta = clock.getDelta()
+      elapsed += delta
+      const t = elapsed
 
-      // Pulse current node scale
-      if (currentNode) {
-        const s = 1 + Math.sin(t * 1.8) * 0.05
-        currentNode.mesh.scale.setScalar(s)
-      }
+      // Ground ring pulse
+      ringMat.opacity = 0.3 + Math.sin(t * 2) * 0.15
 
-      // Pulse point light
-      pointLight.intensity = 2.5 + Math.sin(t * 2.2) * 0.7
+      // Sprite label bob
+      labelSprites.forEach(({ sprite, baseY, index }) => {
+        sprite.position.y = baseY + Math.sin(t * 1.5 + index) * 0.06
+      })
 
-      // Pulse rings
-      ring1.rotation.z = t * 0.4
-      ring2.rotation.z = -t * 0.3
-      ring1Mat.opacity = 0.25 + Math.sin(t * 2) * 0.1
-      ring2Mat.opacity = 0.25 + Math.sin(t * 2 + 1) * 0.1
-
-      // Float other nodes
-      nodes.forEach(node => {
-        if (node.isOther) {
-          node.mesh.position.y = node.baseY + Math.sin(t * 0.5 + node.floatIndex * 0.8) * 0.18
+      // Vehicle animation
+      animVehicles.forEach(v => {
+        v.progress += v.speed * delta
+        if (v.progress >= 1) {
+          v.progress = 0
+          v.segment = (v.segment + 1) % v.waypoints.length
+        }
+        const from = v.waypoints[v.segment]
+        const to = v.waypoints[(v.segment + 1) % v.waypoints.length]
+        v.group.position.lerpVectors(from, to, v.progress)
+        const dir = to.clone().sub(from).normalize()
+        if (dir.lengthSq() > 0) {
+          v.group.rotation.y = Math.atan2(dir.x, dir.z)
         }
       })
 
@@ -447,15 +987,16 @@ export default function CourseGraph({ course }: { course: CourseData }) {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.header}>
-        <p className="section-eyebrow" style={{ color: '#087283' }}>Kurs-Ökosystem</p>
-        <h3 className={styles.title}>Dein Ausbildungsweg in 3D</h3>
-        <p className={styles.hint}>Drehen · Zoomen · Kurs anklicken</p>
+      <div className={styles.canvas} ref={mountRef} />
+
+      <div className={styles.overlay}>
+        <div className={styles.eyebrow}>Kurs-Ökosystem</div>
+        <h3 className={styles.title}>Dein Ausbildungsweg</h3>
+        <div className={styles.hint}>Drehen · Zoomen · Gebäude anklicken</div>
       </div>
-      <div className={styles.canvasWrap}>
-        <div ref={mountRef} className={styles.canvas} />
-        <div ref={tooltipRef} className={styles.tooltip} style={{ display: 'none' }} />
-      </div>
+
+      <div ref={tooltipRef} className={styles.tooltip} style={{ display: 'none' }} />
+
       <div className={styles.legend}>
         <span className={styles.legendItem}>
           <span className={styles.dot} style={{ background: '#087283' }} />
@@ -474,7 +1015,7 @@ export default function CourseGraph({ course }: { course: CourseData }) {
           </span>
         )}
         <span className={styles.legendItem}>
-          <span className={styles.dot} style={{ background: '#1e3a5f' }} />
+          <span className={styles.dot} style={{ background: '#94a3b8' }} />
           Weitere Kurse
         </span>
       </div>

@@ -1,36 +1,16 @@
 .wrapper {
-  background: #0d1b2a;
+  position: relative;
+  width: 100%;
   border-radius: 16px;
   overflow: hidden;
+  background: #d4eaf7;
   margin-top: 8px;
-}
-
-.header {
-  padding: 28px 28px 0;
-}
-
-.title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #fff;
-  margin: 6px 0 4px;
-}
-
-.hint {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.38);
-  font-family: var(--font-ui);
-  letter-spacing: 0.5px;
-  margin-bottom: 0;
-}
-
-.canvasWrap {
-  position: relative;
 }
 
 .canvas {
   width: 100%;
-  height: 440px;
+  height: calc(80vh - 90px);
+  min-height: 460px;
   display: block;
   cursor: grab;
 }
@@ -39,58 +19,94 @@
   cursor: grabbing;
 }
 
-.canvas canvas {
-  display: block !important;
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 24px;
+  background: linear-gradient(to bottom, rgba(212, 234, 247, 0.9) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #087283;
+  margin-bottom: 2px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1D1D1B;
+  margin: 0 0 2px;
+}
+
+.hint {
+  font-size: 11px;
+  color: #6B7280;
+  font-family: var(--font-ui, monospace);
 }
 
 .tooltip {
   position: absolute;
-  transform: translate(-50%, -110%);
-  background: rgba(13, 27, 42, 0.96);
-  border: 1px solid rgba(8, 114, 131, 0.5);
+  transform: translate(-50%, -115%);
+  background: rgba(255, 255, 255, 0.97);
+  border: 1.5px solid #087283;
   border-radius: 10px;
   padding: 10px 14px;
   pointer-events: none;
   z-index: 10;
   min-width: 150px;
   text-align: center;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   font-family: var(--font-body, sans-serif);
 }
 
 .legend {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
   display: flex;
-  gap: 18px;
-  padding: 14px 28px 20px;
+  gap: 14px;
   flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 8px 16px;
 }
 
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-ui);
+  gap: 6px;
+  font-size: 11px;
+  color: #374151;
+  font-family: var(--font-ui, monospace);
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 @media (max-width: 600px) {
   .canvas {
-    height: 300px;
+    height: 55vh;
+    min-height: 320px;
   }
 
-  .header {
-    padding: 20px 20px 0;
+  .overlay {
+    padding: 14px 16px;
   }
 
   .legend {
-    padding: 12px 20px 16px;
+    gap: 10px;
+    padding: 6px 12px;
   }
 }
