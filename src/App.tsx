@@ -17,6 +17,7 @@ import DankeKontakt from './pages/DankeKontakt'
 import Konto from './pages/Konto'
 import Login from './pages/Login'
 import CategoryStub from './pages/CategoryStub'
+import KursDetail from './pages/KursDetail'
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/ueber-uns" element={<UeberUns />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
+          <Route path="/kurs/:slug" element={<KursDetail />} />
           <Route path="/warenkorb" element={<Warenkorb />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/danke/buchung" element={<DankeBuchung />} />

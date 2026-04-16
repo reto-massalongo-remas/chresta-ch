@@ -11,7 +11,8 @@
 .row:first-child { border-top: 1px solid var(--border-lt); }
 .row:hover { background: var(--teal-pale); }
 
-.name  { font-size: 15px; font-weight: 500; color: var(--text); }
+.name  { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; transition: color 0.12s; }
+.name:hover { color: var(--teal); }
 
 .meta {
   font-size: 13px;

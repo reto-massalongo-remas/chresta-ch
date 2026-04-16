@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { nameToSlug } from '../../data/courses'
 import styles from './CourseRow.module.css'
 
 export interface Course {
@@ -8,6 +9,7 @@ export interface Course {
   time: string
   price: string
   seats: number | null   // null = ausgebucht
+  slug?: string          // optional override; derived from name if absent
 }
 
 interface Props {
@@ -16,8 +18,10 @@ interface Props {
 }
 
 export default function CourseRow({ course, index }: Props) {
-  const full = course.seats === null || course.seats === 0
-  const low  = course.seats !== null && course.seats <= 2
+  const full  = course.seats === null || course.seats === 0
+  const low   = course.seats !== null && course.seats <= 2
+  const slug  = course.slug ?? nameToSlug(course.name)
+  const detailHref = `/kurs/${slug}`
 
   const seatsClass = full ? styles.full : low ? styles.low : styles.ok
   const seatsLabel = full ? 'ausgebucht' : `${course.seats} Plätze frei`
@@ -29,7 +33,8 @@ export default function CourseRow({ course, index }: Props) {
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05, duration: 0.32, ease: 'easeOut' }}
     >
-      <span className={styles.name}>{course.name}</span>
+      {/* Clicking the course name goes to the detail page */}
+      <Link to={detailHref} className={styles.name}>{course.name}</Link>
 
       <span className={styles.meta}>
         <span className={styles.metaIcon}>📅</span>
@@ -48,13 +53,13 @@ export default function CourseRow({ course, index }: Props) {
         {seatsLabel}
       </span>
 
-      {/* Mobile price+seats row (CSS only via class) */}
+      {/* Mobile price+seats row placeholder (CSS only) */}
       <span className={styles.priceRow} style={{ display: 'none' }} />
 
       {full ? (
         <button className={`${styles.bookBtn} ${styles.bookFull}`} disabled>ausgebucht</button>
       ) : (
-        <Link to="/warenkorb" className={styles.bookBtn}>buchen →</Link>
+        <Link to={detailHref} className={styles.bookBtn}>Details →</Link>
       )}
     </motion.div>
   )

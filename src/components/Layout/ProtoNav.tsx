@@ -4,8 +4,9 @@ import styles from './ProtoNav.module.css'
 const screens = [
   { path: '/',                   label: '🏠 Home' },
   { path: '/fahrschule',         label: '📂 Fahrschule' },
-  { path: '/fahrschule/motorrad',label: '🏍 Kurs' },
-  { path: '/fahrstunden-buchen', label: '📅 Fahrstunden' },
+  { path: '/fahrschule/motorrad',      label: '🏍 Kurs' },
+  { path: '/kurs/nothelfer-1',         label: '📋 Kurs Detail' },
+  { path: '/fahrstunden-buchen',       label: '📅 Fahrstunden' },
   { path: '/mieten/motorrad',    label: '🔑 Mieten' },
   { path: '/shop',               label: '🛍 Shop' },
   { path: '/kontakt',            label: '✉️ Kontakt' },
