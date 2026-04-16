@@ -18,6 +18,9 @@ import Konto from './pages/Konto'
 import Login from './pages/Login'
 import CategoryStub from './pages/CategoryStub'
 import KursDetail from './pages/KursDetail'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminKurse from './pages/admin/AdminKurse'
 
 export default function App() {
   return (
@@ -48,6 +51,11 @@ export default function App() {
           <Route path="/danke/kontakt" element={<DankeKontakt />} />
           <Route path="/konto" element={<Konto />} />
           <Route path="/login" element={<Login />} />
+          {/* Admin backend demo */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="kurse" element={<AdminKurse />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Header.module.css'
+import Logo from '../ui/Logo'
 
 const NAV = [
   {
@@ -156,16 +157,14 @@ const menuVariants = {
   exit: { opacity: 0, y: -8, transition: { duration: 0.12 } },
 }
 
-const mobileVariants = {
-  hidden: { x: '100%' },
-  visible: { x: 0, transition: { type: 'spring', damping: 28, stiffness: 300 } },
-  exit: { x: '100%', transition: { duration: 0.22, ease: 'easeIn' } },
-}
+const EASE = [0.4, 0, 0.2, 1] as const
 
 export default function Header() {
   const { pathname } = useLocation()
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileSubMenu, setMobileSubMenu] = useState<(typeof NAV)[0] | null>(null)
+  const [direction, setDirection] = useState(1)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -174,11 +173,40 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false) }, [pathname])
+  useEffect(() => {
+    setMobileOpen(false)
+    setMobileSubMenu(null)
+  }, [pathname])
 
   const isHome = pathname === '/'
   const transparent = isHome && !scrolled
+
+  function openSub(item: (typeof NAV)[0]) {
+    setDirection(1)
+    setMobileSubMenu(item)
+  }
+
+  function closeSub() {
+    setDirection(-1)
+    setMobileSubMenu(null)
+  }
+
+  function closeAll() {
+    setMobileOpen(false)
+    setMobileSubMenu(null)
+  }
+
+  const slideVariants = {
+    initial: (dir: number) => ({
+      x: dir > 0 ? '100%' : '-8%',
+      opacity: dir > 0 ? 0.5 : 0,
+    }),
+    animate: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({
+      x: dir > 0 ? '-8%' : '100%',
+      opacity: 0,
+    }),
+  }
 
   return (
     <header className={`${styles.header} ${transparent ? styles.transparent : ''}`}>
@@ -186,8 +214,7 @@ export default function Header() {
 
         {/* Logo */}
         <Link to="/" className={styles.logo}>
-          <span className={styles.logoScript}>Chresta</span>
-          <span className={styles.logoSub}>Affoltern am Albis</span>
+          <Logo height={44} />
         </Link>
 
         {/* Desktop Nav */}
@@ -250,7 +277,7 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Actions */}
+        {/* Actions — desktop shows booking button, mobile shows only cart */}
         <div className={styles.actions}>
           <Link to="/warenkorb" className={styles.cartBtn} title="Warenkorb">
             <span>🛒</span>
@@ -273,52 +300,97 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile fullscreen panel */}
       <AnimatePresence>
         {mobileOpen && (
-          <>
-            <motion.div
-              className={styles.mobileBackdrop}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileOpen(false)}
-            />
-            <motion.div
-              className={styles.mobilePanel}
-              variants={mobileVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
-              <div className={styles.mobilePanelHead}>
-                <span className={styles.mobileLogo}>Chresta</span>
-                <button className={styles.mobileClose} onClick={() => setMobileOpen(false)}>✕</button>
-              </div>
+          <motion.div
+            className={styles.mobilePanel}
+            initial={{ clipPath: 'inset(0 0 100% 0)' }}
+            animate={{ clipPath: 'inset(0 0 0% 0)', transition: { duration: 0.3, ease: EASE } }}
+            exit={{ clipPath: 'inset(0 0 100% 0)', transition: { duration: 0.25, ease: EASE } }}
+          >
+            {/* Panel header */}
+            <div className={styles.mobilePanelHead}>
+              <Link to="/" onClick={closeAll}>
+                <Logo height={36} />
+              </Link>
+              <button className={styles.mobileClose} onClick={closeAll} aria-label="Menü schliessen">
+                ✕
+              </button>
+            </div>
 
-              <div className={styles.mobileLinks}>
-                {NAV.map(item => (
-                  <Link
-                    key={item.label}
-                    to={item.href}
-                    className={styles.mobileLink}
+            {/* Scrollable body with page-slide animation */}
+            <div className={styles.mobilePanelScroll}>
+              <AnimatePresence mode="wait" custom={direction}>
+                {!mobileSubMenu ? (
+                  <motion.div
+                    key="main"
+                    className={styles.mobileMainPage}
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ duration: 0.28, ease: EASE }}
                   >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+                    {NAV.map(item => (
+                      <button
+                        key={item.label}
+                        className={styles.mobileNavRow}
+                        onClick={() => openSub(item)}
+                      >
+                        {item.label}
+                        <span className={styles.mobileNavChev}>›</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={mobileSubMenu.label}
+                    className={styles.mobileSubPage}
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ duration: 0.28, ease: EASE }}
+                  >
+                    <button className={styles.mobileBackRow} onClick={closeSub}>
+                      <span className={styles.mobileBackArrow}>‹</span>
+                      <span className={styles.mobileBackLabel}>{mobileSubMenu.label}</span>
+                    </button>
 
-              <div className={styles.mobilePanelFoot}>
-                <Link to="/fahrstunden-buchen" className="btn btn-teal btn-full">
-                  Fahrstunden buchen →
-                </Link>
-                <div className={styles.mobileContact}>
-                  <a href="tel:0447615958">📞 044 761 59 58</a>
-                  <a href="mailto:info@chresta.ch">✉ info@chresta.ch</a>
-                </div>
+                    {mobileSubMenu.cols.map(col => (
+                      <div key={col.title} className={styles.mobileSection}>
+                        <div className={styles.mobileSectionTitle}>{col.title}</div>
+                        {col.links.map(link => (
+                          <Link
+                            key={link.label}
+                            to={link.href}
+                            className={styles.mobileSubLink}
+                            onClick={closeAll}
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Panel footer */}
+            <div className={styles.mobilePanelFoot}>
+              <Link to="/fahrstunden-buchen" className="btn btn-teal btn-full" onClick={closeAll}>
+                Fahrstunden buchen →
+              </Link>
+              <div className={styles.mobileContact}>
+                <a href="tel:0447615958">📞 044 761 59 58</a>
+                <a href="mailto:info@chresta.ch">✉ info@chresta.ch</a>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>

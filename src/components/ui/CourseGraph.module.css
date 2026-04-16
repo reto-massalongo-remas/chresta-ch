@@ -1,0 +1,96 @@
+.wrapper {
+  background: #0d1b2a;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.header {
+  padding: 28px 28px 0;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  margin: 6px 0 4px;
+}
+
+.hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.38);
+  font-family: var(--font-ui);
+  letter-spacing: 0.5px;
+  margin-bottom: 0;
+}
+
+.canvasWrap {
+  position: relative;
+}
+
+.canvas {
+  width: 100%;
+  height: 440px;
+  display: block;
+  cursor: grab;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+.canvas canvas {
+  display: block !important;
+}
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -110%);
+  background: rgba(13, 27, 42, 0.96);
+  border: 1px solid rgba(8, 114, 131, 0.5);
+  border-radius: 10px;
+  padding: 10px 14px;
+  pointer-events: none;
+  z-index: 10;
+  min-width: 150px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  font-family: var(--font-body, sans-serif);
+}
+
+.legend {
+  display: flex;
+  gap: 18px;
+  padding: 14px 28px 20px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-ui);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .canvas {
+    height: 300px;
+  }
+
+  .header {
+    padding: 20px 20px 0;
+  }
+
+  .legend {
+    padding: 12px 20px 16px;
+  }
+}

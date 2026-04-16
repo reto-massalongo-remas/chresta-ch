@@ -1,0 +1,465 @@
+/* ─── Page shell ─────────────────────────────────────────── */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1200px;
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ─── Buttons ────────────────────────────────────────────── */
+
+.btnPrimary {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.12s;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+}
+
+.btnGhost {
+  background: none;
+  border: none;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btnGhost:hover {
+  text-decoration: underline;
+}
+
+/* ─── Filter bar ─────────────────────────────────────────── */
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.searchInput:focus {
+  border-color: var(--teal);
+}
+
+.filterSelect {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--white);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.filterSelect:focus {
+  border-color: var(--teal);
+}
+
+.clearBtn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 12px;
+  height: 38px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.clearBtn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ─── Stats strip ────────────────────────────────────────── */
+
+.statsStrip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0 24px;
+  height: 60px;
+  box-shadow: var(--shadow);
+}
+
+.statPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+}
+
+.statNum {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--teal);
+  font-family: var(--font-ui);
+}
+
+.statPillLabel {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
+
+/* ─── Card ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* ─── Table ──────────────────────────────────────────────── */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead tr {
+  background: var(--bg);
+}
+
+.table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border-lt);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: rgba(8, 114, 131, 0.025);
+}
+
+/* ─── Kurs cell ──────────────────────────────────────────── */
+
+.kursCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kursIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.kursName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* ─── Category badge ─────────────────────────────────────── */
+
+.catBadge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.catFahrschule {
+  background: rgba(8, 114, 131, 0.1);
+  color: var(--teal);
+}
+
+.catChauffeur {
+  background: rgba(26, 42, 74, 0.1);
+  color: #1a2a4a;
+}
+
+/* ─── Status badges ──────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge_green {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.badge_yellow {
+  background: rgba(245, 158, 11, 0.13);
+  color: #B45309;
+}
+
+.badge_grey {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--muted);
+}
+
+/* ─── Meta cells ─────────────────────────────────────────── */
+
+.metaCell {
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.priceCell {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.bookingCell {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.bookingNum {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+
+.bookingLabel {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ─── Action buttons ─────────────────────────────────────── */
+
+.actionGroup {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.actionLink {
+  display: inline-block;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  transition: border-color 0.12s, color 0.12s;
+  line-height: 1.6;
+}
+
+.actionLink:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.actionBtn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.actionBtn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.actionBtnDanger:hover {
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+/* ─── Empty state ────────────────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 52px 24px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 36px;
+}
+
+/* ─── CTA card ───────────────────────────────────────────── */
+
+.ctaCard {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+
+.ctaIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.ctaBody {
+  flex: 1;
+}
+
+.ctaTitle {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.ctaDesc {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 480px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .statsStrip {
+    padding: 0 12px;
+  }
+
+  .statPill {
+    padding: 0 12px;
+  }
+
+  .ctaCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInput {
+    max-width: 100%;
+  }
+
+  .statsStrip {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .statDivider {
+    display: none;
+  }
+}

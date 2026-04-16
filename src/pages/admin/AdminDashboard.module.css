@@ -1,0 +1,449 @@
+/* ─── Page shell ─────────────────────────────────────────── */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ─── Buttons ────────────────────────────────────────────── */
+
+.btnPrimary {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.12s;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+}
+
+.btnGhost {
+  background: none;
+  border: none;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btnGhost:hover {
+  text-decoration: underline;
+}
+
+/* ─── Stats row ──────────────────────────────────────────── */
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.statCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.statTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.statIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.statDelta {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.deltaUp {
+  background: rgba(5, 150, 105, 0.12);
+  color: #059669;
+}
+
+.deltaNeutral {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--muted);
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.statNote {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ─── Two-column ─────────────────────────────────────────── */
+
+.columns {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* ─── Card ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border-lt);
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text);
+  margin: 0;
+}
+
+/* ─── Table ──────────────────────────────────────────────── */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead tr {
+  background: var(--bg);
+}
+
+.table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-lt);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--bg);
+}
+
+.nameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nameText {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.emailText {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.kursCell {
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.monoCell {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* ─── Status badges ──────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge_green {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.badge_orange {
+  background: rgba(245, 158, 11, 0.13);
+  color: #B45309;
+}
+
+.badge_grey {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--muted);
+}
+
+/* ─── Action buttons ─────────────────────────────────────── */
+
+.actionGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.actionBtn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.actionBtn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ─── Session list ───────────────────────────────────────── */
+
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sessionCard {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-lt);
+}
+
+.sessionCard:last-child {
+  border-bottom: none;
+}
+
+.sessionTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.sessionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sessionKurs {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sessionMeta {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--font-ui);
+}
+
+.instructorBadge {
+  background: rgba(8, 114, 131, 0.1);
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+/* ─── Capacity bar ───────────────────────────────────────── */
+
+.capBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.capTrack {
+  flex: 1;
+  height: 5px;
+  background: var(--border-lt);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.capFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+
+.capLabel {
+  font-size: 11px;
+  font-family: var(--font-ui);
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ─── Activity log ───────────────────────────────────────── */
+
+.logBadge {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--border-lt);
+  color: var(--muted);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.activityList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-lt);
+  font-size: 13px;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityIcon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.activityText {
+  flex: 1;
+  color: var(--text);
+}
+
+.activityTime {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  font-family: var(--font-ui);
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .statsRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

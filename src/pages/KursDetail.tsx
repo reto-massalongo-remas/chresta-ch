@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import FadeIn from '../components/ui/FadeIn'
-import { getCourse, type CourseData, type Session, type RelatedCourse } from '../data/courses'
+import CourseGraph from '../components/ui/CourseGraph'
+import { getCourse, type CourseData, type Session } from '../data/courses'
 import styles from './KursDetail.module.css'
 
 /* ── ACCORDION ITEM ───────────────────────────── */
@@ -104,80 +105,7 @@ function SessionCard({
   )
 }
 
-/* ── DEPENDENCY CHAIN ─────────────────────────── */
-function DependencyChain({ course }: { course: CourseData }) {
-  const hasDeps = course.prerequisites.length > 0
-  const hasNext = course.nextSteps.length > 0
-  if (!hasDeps && !hasNext) return null
-
-  return (
-    <FadeIn>
-      <div className={styles.depSection}>
-        <p className="section-eyebrow">Ausbildungsweg</p>
-        <h3 className={styles.depTitle}>Wie passt dieser Kurs in deine Ausbildung?</h3>
-
-        <div className={styles.depChain}>
-          {/* Prerequisites */}
-          {course.prerequisites.map((dep, i) => (
-            <div key={dep.slug} className={styles.depGroup}>
-              <DepPill course={dep} type="pre" />
-              {i < course.prerequisites.length - 1 && <span className={styles.depOr}>oder</span>}
-            </div>
-          ))}
-
-          {hasDeps && <div className={styles.depArrow}><div className={styles.depArrowLine}/><span>→</span></div>}
-
-          {/* Current course */}
-          <div className={`${styles.depCurrent}`}>
-            <span className={styles.depCurrentIcon}>{course.icon}</span>
-            <div>
-              <div className={styles.depCurrentLabel}>Dieser Kurs</div>
-              <div className={styles.depCurrentName}>{course.shortName}</div>
-            </div>
-          </div>
-
-          {hasNext && <div className={styles.depArrow}><div className={styles.depArrowLine}/><span>→</span></div>}
-
-          {/* Next steps */}
-          {course.nextSteps.map((next, i) => (
-            <div key={next.slug} className={styles.depGroup}>
-              <DepPill course={next} type="next" />
-              {i < course.nextSteps.length - 1 && <span className={styles.depOr}>oder</span>}
-            </div>
-          ))}
-        </div>
-
-        {/* Legend */}
-        <div className={styles.depLegend}>
-          {hasDeps && course.prerequisites.some(p => p.relation === 'required') && (
-            <span className={styles.depLegendItem}><span className={styles.legendDotRequired} /> Voraussetzung (Pflicht)</span>
-          )}
-          {hasDeps && course.prerequisites.some(p => p.relation === 'recommended') && (
-            <span className={styles.depLegendItem}><span className={styles.legendDotRecommended} /> Empfohlen</span>
-          )}
-          {hasNext && (
-            <span className={styles.depLegendItem}><span className={styles.legendDotNext} /> Nächster Schritt</span>
-          )}
-        </div>
-      </div>
-    </FadeIn>
-  )
-}
-
-function DepPill({ course, type }: { course: RelatedCourse; type: 'pre' | 'next' }) {
-  const isRequired = course.relation === 'required'
-  return (
-    <Link
-      to={`/kurs/${course.slug}`}
-      className={`${styles.depPill} ${type === 'pre' ? (isRequired ? styles.depPillRequired : styles.depPillRecommended) : styles.depPillNext}`}
-    >
-      <span>{course.icon}</span>
-      <span>{course.name}</span>
-      {isRequired && <span className={styles.depPillTag}>Pflicht</span>}
-      {course.relation === 'recommended' && <span className={styles.depPillTag} style={{background:'rgba(8,114,131,0.1)', color:'var(--teal)'}}>Empfohlen</span>}
-    </Link>
-  )
-}
+/* DependencyChain replaced by CourseGraph (Three.js 3D visualization) */
 
 /* ── MAIN PAGE ────────────────────────────────── */
 export default function KursDetail() {
@@ -313,8 +241,12 @@ export default function KursDetail() {
               </section>
             </FadeIn>
 
-            {/* Dependency chain */}
-            <DependencyChain course={course} />
+            {/* 3D Course ecosystem graph */}
+            <FadeIn delay={0.25}>
+              <section className={styles.contentSection}>
+                <CourseGraph course={course} />
+              </section>
+            </FadeIn>
           </div>
 
           {/* ── RIGHT: Sticky session picker ── */}
