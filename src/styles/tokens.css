@@ -1,46 +1,191 @@
 /* ═══════════════════════════════════════════════════
    Chresta.ch · Design Tokens
-   Source: Figma UI Kit node-id=140-2
+   Version 1.1 · 2026
+   Source: chresta-design-system / Figma Chresta.ch---2025
 ═══════════════════════════════════════════════════ */
 :root {
-  /* Brand */
-  --teal:        #087283;
-  --teal-dark:   #026D7E;
-  --teal-pale:   #EFF6F6;
-  --teal-light:  #DDF4F8;
-  --navy:        #242958;
-  --dark:        #3A3A3A;
+  /* ── BRAND (canonical) ─────────────────────────── */
+  --color-brand-teal-700: #026D7E;
+  --color-brand-teal-600: #087283;
+  --color-brand-teal-500: #538F99;
+  --color-brand-teal-300: #DDF4F8;
+  --color-brand-teal-100: #EFF6F6;
+  --color-brand-navy-900: #242958;
+  --color-brand-navy-800: #041820;
 
-  /* Text */
-  --text:        #1A202C;
-  --muted:       #585858;
-  --hint:        #A7A7A7;
+  /* ── NEUTRALS ──────────────────────────────────── */
+  --color-neutral-900: #1A202C;
+  --color-neutral-800: #3A3A3A;
+  --color-neutral-700: #29454B;
+  --color-neutral-500: #585858;
+  --color-neutral-400: #A7A7A7;
+  --color-neutral-300: #DADADA;
+  --color-neutral-200: #EEEEEE;
+  --color-neutral-100: #EFF6F6;
+  --color-neutral-50:  #F6F6F6;
+  --color-neutral-0:   #FFFFFF;
+  --color-neutral-black: #000000;
 
-  /* Backgrounds */
-  --bg:          #F6F6F6;
-  --white:       #FFFFFF;
+  /* ── ACCENT / SEMANTIC ─────────────────────────── */
+  --color-accent-green: #34C759;
+  --color-status-success: #2E7D32;
+  --color-status-error:   #C62828;
+  --color-status-info:    #1565C0;
+  --color-status-warn:    #E65100;
 
-  /* Borders */
-  --border:      #DADADA;
-  --border-lt:   #EEEEEE;
+  /* ── ALPHA LAYERS ──────────────────────────────── */
+  --color-alpha-white-70: rgba(255, 255, 255, 0.70);
+  --color-alpha-white-52: rgba(255, 255, 255, 0.52);
+  --color-alpha-white-23: rgba(250, 250, 250, 0.23);
+  --color-alpha-white-13: rgba(250, 250, 250, 0.13);
+  --color-alpha-white-10: rgba(255, 255, 255, 0.10);
 
-  /* Semantic */
-  --success:     #2E7D32;
-  --error:       #C62828;
-  --info:        #1565C0;
+  /* ── GRADIENTS ─────────────────────────────────── */
+  --gradient-hero:       linear-gradient(180deg, rgba(8,114,131,0.09) 0%, #087283 100%);
+  --gradient-card-teal:  linear-gradient(129deg, #538F99 0%, rgba(77,121,128,0.01) 57%);
+  --gradient-card-navy:  linear-gradient(49.56deg, #242958 0%, rgba(36,41,88,0.5) 26.12%, rgba(0,0,0,0) 60.56%);
+  --gradient-card-dark:  linear-gradient(23.55deg, #041820 23%, rgba(0,0,0,0.02) 48%);
 
-  /* Typography */
-  --font:        'Outfit', sans-serif;
-  --font-ui:     'Inter', sans-serif;
-  --font-script: 'Great Vibes', cursive;
+  /* ── TYPOGRAPHY — families ─────────────────────── */
+  --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-body:    'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-ui:      'Inter',  ui-sans-serif, system-ui, sans-serif;
+  --font-label:   'Encode Sans Expanded', 'Inter', ui-sans-serif, sans-serif;
+  --font-script:  'Island Moments', 'Great Vibes', cursive;
 
-  /* Layout */
-  --nav-h:         90px;
-  --nav-h-mobile:  64px;
-  --max:           1280px;
-  --radius:      6px;
+  /* Type scale */
+  --font-size-display:    3.42rem;  /* 54.7px */
+  --font-size-h1:         3.25rem;  /* 52px   */
+  --font-size-h2:         2.60rem;  /* 41.7px */
+  --font-size-h2-card:    2.36rem;  /* 37.7px */
+  --font-size-h3:         1.50rem;  /* 24px   */
+  --font-size-h4:         1.36rem;  /* 21.7px */
+  --font-size-body-lg:    1.25rem;  /* 20px   */
+  --font-size-body-md:    1.25rem;  /* 20px   */
+  --font-size-body-sm:    0.875rem; /* 14px   */
+  --font-size-button:     0.99rem;  /* 15.8px */
+  --font-size-nav:        0.875rem; /* 14px   */
+  --font-size-eyebrow:    0.75rem;  /* 12px   */
+  --font-size-footer-link:0.87rem;  /* 13.9px */
+
+  --line-tight:   1;
+  --line-snug:    1.15;
+  --line-base:    1.4;
+  --line-relaxed: 1.68;
+
+  --tracking-tightest: -0.05em;
+  --tracking-tight:    -0.012em;
+  --tracking-normal:    0;
+  --tracking-wide:      0.025em;
+  --tracking-wider:     0.05em;
+  --tracking-widest:    0.25em;
+
+  --weight-extralight: 200;
+  --weight-light:      300;
+  --weight-regular:    400;
+  --weight-medium:     500;
+  --weight-bold:       700;
+
+  /* ── SPACING (4px grid) ────────────────────────── */
+  --space-0:  0;
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-18: 4.5rem;
+  --space-20: 5rem;
+
+  /* ── RADIUS ────────────────────────────────────── */
+  --radius-none: 0;
+  --radius-sm:   3px;
+  --radius-md:   4px;
   --radius-lg:   10px;
-  --shadow:      0 2px 16px rgba(0,0,0,0.07);
-  --shadow-md:   0 4px 32px rgba(0,0,0,0.11);
-  --shadow-lg:   0 8px 48px rgba(0,0,0,0.15);
+  --radius-full: 9999px;
+
+  /* ── ELEVATION ─────────────────────────────────── */
+  --shadow-none:     0 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-card:     0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 10px 24px rgba(0, 0, 0, 0.12);
+
+  /* ── MOTION ────────────────────────────────────── */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasized:cubic-bezier(0.2, 0, 0, 1);
+
+  /* ── LAYOUT ────────────────────────────────────── */
+  --container-max:      1440px;
+  --container-content:  1296px;
+  --container-inner:     988px;
+  --gutter:              22px;
+  --page-padding-x:      72px;
+
+  /* ═══════════════════════════════════════════════
+     LEGACY ALIASES — preserve existing call sites.
+     All of these now map to DS canonical tokens.
+     ═══════════════════════════════════════════════ */
+  /* Brand aliases */
+  --teal:        var(--color-brand-teal-600);
+  --teal-dark:   var(--color-brand-teal-700);
+  --teal-pale:   var(--color-brand-teal-100);
+  --teal-light:  var(--color-brand-teal-300);
+  --navy:        var(--color-brand-navy-900);
+  --dark:        var(--color-neutral-800);
+
+  /* Text aliases */
+  --text:  var(--color-neutral-900);
+  --muted: var(--color-neutral-500);
+  --hint:  var(--color-neutral-400);
+
+  /* Background aliases */
+  --bg:    var(--color-neutral-50);
+  --white: var(--color-neutral-0);
+
+  /* Border aliases */
+  --border:    var(--color-neutral-300);
+  --border-lt: var(--color-neutral-200);
+
+  /* Semantic aliases */
+  --success: var(--color-status-success);
+  --error:   var(--color-status-error);
+  --info:    var(--color-status-info);
+
+  /* Typography aliases — map legacy `--font` to DS families */
+  --font: var(--font-body);
+
+  /* Layout aliases */
+  --nav-h:        90px;
+  --nav-h-mobile: 64px;
+  --max:          1280px; /* app chrome keeps 1280; hero sections can opt into --container-max */
+  --radius:       var(--radius-md);   /* legacy 6px → DS 4px (form inputs, chips) */
+  /* --radius-lg already defined above as 10px — cards & buttons share it */
+
+  /* Shadow aliases (preserve legacy names, slightly refined towards DS elevation) */
+  --shadow:    var(--shadow-card);
+  --shadow-md: var(--shadow-elevated);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.15);
+}
+
+/* ── FOCUS RING (DS mandate, a11y) ─────────────── */
+:where(a, button, [role="tab"], [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-brand-teal-600);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* ── REDUCED MOTION ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

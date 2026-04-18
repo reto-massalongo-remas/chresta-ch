@@ -48,8 +48,10 @@
   align-items: center;
   height: 100%;
   padding: 0 16px;
-  font-size: 14px;
-  font-weight: 500;
+  font-family: var(--font-label);
+  font-size: var(--font-size-nav);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
   color: var(--muted);
   border-bottom: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s;
@@ -95,10 +97,10 @@
   grid-template-columns: repeat(4, 1fr);
 }
 .megaColTitle {
-  font-family: var(--font-ui);
+  font-family: var(--font-label);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 2px;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
   color: var(--hint);
   margin-bottom: 10px;
